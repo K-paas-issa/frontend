@@ -1,10 +1,5 @@
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import MainPage from "@/pages/mainPage";
 
 export default function Home() {
-  return (
-    <>
-      <Button>버튼입니다</Button>
-    </>
-  );
+  return <MainPage />;
 }

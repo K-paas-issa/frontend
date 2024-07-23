@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Toaster } from "@/components/molecule";
 
 export const metadata: Metadata = {
   title: "오물풍선 알리미",
@@ -14,7 +15,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head></head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }
