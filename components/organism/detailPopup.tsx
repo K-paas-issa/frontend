@@ -1,7 +1,5 @@
 import React from "react";
 
-const DetailPopup = () => {
+export const DetailPopup = () => {
   return <div>DetailPopup</div>;
 };
-
-export default DetailPopup;

@@ -1,7 +1,5 @@
 import React from "react";
 
-const CommentInput = () => {
+export const CommentInput = () => {
   return <div>CommentInput</div>;
 };
-
-export default CommentInput;

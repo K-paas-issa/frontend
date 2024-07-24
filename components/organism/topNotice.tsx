@@ -1,7 +1,5 @@
 import React from "react";
 
-const TopNotice = () => {
+export const TopNotice = () => {
   return <div>TopNotice</div>;
 };
-
-export default TopNotice;

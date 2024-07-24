@@ -1,7 +1,5 @@
 import React from "react";
 
-const AlertModal = () => {
+export const AlertModal = () => {
   return <div>AlertModal</div>;
 };
-
-export default AlertModal;

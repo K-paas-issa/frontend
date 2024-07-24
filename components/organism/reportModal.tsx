@@ -1,7 +1,5 @@
 import React from "react";
 
-const ReportModal = () => {
+export const ReportModal = () => {
   return <div>ReportModal</div>;
 };
-
-export default ReportModal;
