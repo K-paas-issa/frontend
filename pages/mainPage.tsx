@@ -1,7 +1,8 @@
 import React from "react";
+import { Map } from "@/components/organism";
 
 const MainPage = () => {
-  return <div>MainPage</div>;
+  return <Map />;
 };
 
 export default MainPage;
