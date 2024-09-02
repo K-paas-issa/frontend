@@ -1,11 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { DetailPopup } from "./detailPopup";
 
 declare global {
   interface Window {
     kakao: any;
   }
+}
+
+export interface AreaInfo {
+  id: number;
+  lat: number;
+  lon: number;
+  risk: number;
+  areaName: string;
+  reportCount: number;
+  status: string;
 }
 
 export function Map() {
@@ -28,13 +39,132 @@ export function Map() {
               center: new window.kakao.maps.LatLng(37.5665, 126.978),
               level: 7,
             };
-            const kakaoMap = new window.kakao.maps.Map(mapContainer, mapOption);
-            setMap(kakaoMap);
+            const map = new window.kakao.maps.Map(mapContainer, mapOption);
+            setMap(map);
           }
         });
       }
     };
   };
+
+  const [allAreaList, setAllAreaList] = useState<AreaInfo[]>([]);
+  const [areaInfo, setAreaInfo] = useState<AreaInfo | null>(null);
+  let selectedMarker: any = null;
+
+  const defaultMarkerImage =
+    map && new window.kakao.maps.MarkerImage("/assets/default_marker.png", new window.kakao.maps.Size(38, 42));
+  const selectedMarkerImage =
+    map && new window.kakao.maps.MarkerImage("/assets/selected_marker.png", new window.kakao.maps.Size(38, 42));
+
+  useEffect(() => {
+    setAllAreaList([
+      {
+        id: 1,
+        lat: 37.529521713,
+        lon: 126.964540921,
+        risk: 3.4,
+        areaName: "용산구",
+        reportCount: 3,
+        status: "미처리",
+      },
+      {
+        id: 2,
+        lat: 37.57037778,
+        lon: 126.9816417,
+        risk: 5.1,
+        areaName: "종로구",
+        reportCount: 10,
+        status: "미처리",
+      },
+      {
+        id: 3,
+        lat: 37.523611113,
+        lon: 126.8983417,
+        risk: 1.4,
+        areaName: "영등포구",
+        reportCount: 1,
+        status: "처리",
+      },
+      {
+        id: 4,
+        lat: 37.59996944,
+        lon: 126.9312417,
+        risk: 2.3,
+        areaName: "은평구",
+        reportCount: 1,
+        status: "처리",
+      },
+    ]);
+  }, []);
+
+  const onMapClick = () => {
+    if (selectedMarker) {
+      selectedMarker.setImage(defaultMarkerImage);
+      selectedMarker = null;
+      setAreaInfo(null);
+    }
+  };
+
+  useEffect(() => {
+    if (map) {
+      window.kakao.maps.event.addListener(map, "click", onMapClick);
+    }
+  }, [map]);
+
+  // 마커 생성
+  const changeMarkerImage = (marker: any) => {
+    if (selectedMarker) {
+      selectedMarker.setImage(defaultMarkerImage);
+    }
+
+    marker.setImage(selectedMarkerImage);
+
+    selectedMarker = marker;
+  };
+
+  const createMarker = (info: AreaInfo) => {
+    let marker = new window.kakao.maps.Marker({
+      id: info.id,
+      map: map,
+      position: new window.kakao.maps.LatLng(info.lat, info.lon),
+      image: defaultMarkerImage,
+    });
+
+    const overlayContent =
+      '<div style="font-size: 16px; font-weight: 700; position: relative; color: #FFFFFF; top: -20px; left: 2px; pointer-events: none;">' +
+      info.reportCount +
+      "</div>";
+
+    const overlay = new window.kakao.maps.CustomOverlay({
+      content: overlayContent,
+      map: map,
+      position: marker.getPosition(),
+    });
+
+    overlay.setMap(map);
+
+    window.kakao.maps.event.addListener(marker, "click", function () {
+      changeMarkerImage(marker);
+      setAreaInfo(info);
+    });
+
+    return marker;
+  };
+
+  useEffect(() => {
+    if (map && allAreaList.length > 0) {
+      const areas = allAreaList;
+      if (areas) {
+        if (areas.length === 1) {
+          createMarker(areas[0]);
+        } else {
+          areas.map((area) => {
+            createMarker(area);
+          });
+        }
+      }
+    }
+  }, [map, allAreaList]);
 
   // 데이터에 따른 구역별 폴리곤 생성
   const createEachPolygon = (map: any, geoJsonData: any) => {
@@ -108,5 +238,10 @@ export function Map() {
     }
   }, [map]);
 
-  return <div id="map" style={{ width: "100%", height: "100vh" }} />;
+  return (
+    <div className="w-full relative">
+      <div id="map" style={{ width: "100%", height: "100vh" }} />
+      {areaInfo && <DetailPopup info={areaInfo} />}
+    </div>
+  );
 }
