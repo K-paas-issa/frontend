@@ -48,7 +48,7 @@ export function KakaoMap() {
   };
 
   // 키가 string이고 값이 number인 Map 객체 선언
-  const eachAreasRisk: Map<string, number> = new Map();
+  const [eachAreasRisk, setEachAreasRisk] = useState<Map<string, number>>(new Map());
   const [allAreaList, setAllAreaList] = useState<AreaInfo[]>([]);
   const [areaInfo, setAreaInfo] = useState<AreaInfo | null>(null);
   let selectedMarker: any = null;
@@ -99,13 +99,20 @@ export function KakaoMap() {
     ]);
   }, []);
 
+  // allAreaList가 변경될 때마다 eachAreasRisk를 업데이트
   useEffect(() => {
-    if (allAreaList) {
-      allAreaList.forEach((area) => {
-        eachAreasRisk.set(area.areaName, area.risk);
-      });
-    }
+    const newRiskMap = new Map<string, number>();
+
+    allAreaList.forEach((area) => {
+      newRiskMap.set(area.areaName, area.risk);
+    });
+
+    setEachAreasRisk(newRiskMap);
   }, [allAreaList]);
+
+  useEffect(() => {
+    console.log(eachAreasRisk);
+  }, [eachAreasRisk]);
 
   const onMapClick = () => {
     if (selectedMarker) {
@@ -128,7 +135,6 @@ export function KakaoMap() {
     }
 
     marker.setImage(selectedMarkerImage);
-
     selectedMarker = marker;
   };
 
@@ -186,6 +192,27 @@ export function KakaoMap() {
           const coordinates = feature.geometry.coordinates[0];
           const areaName = feature.properties.SIG_KOR_NM;
           const path = coordinates.map(([lng, lat]: [number, number]) => new window.kakao.maps.LatLng(lat, lng));
+          let bgColor = "#ffffff";
+
+          if (eachAreasRisk.has(areaName)) {
+            const riskValue = eachAreasRisk.get(areaName);
+            if (riskValue !== undefined) {
+              if (riskValue >= 1 && riskValue < 2) {
+                bgColor = "#FFE2A7";
+              }
+              if (riskValue >= 2 && riskValue < 3) {
+                bgColor = "#FFB724";
+              }
+              if (riskValue >= 3 && riskValue < 4) {
+                bgColor = "#EB003B";
+              }
+              if (riskValue >= 4) {
+                bgColor = "#8D0023";
+              }
+            } else {
+              console.error(`Risk value for ${areaName} is undefined.`);
+            }
+          }
 
           const polygon = new window.kakao.maps.Polygon({
             map: map,
@@ -193,7 +220,7 @@ export function KakaoMap() {
             strokeWeight: 2,
             strokeColor: "#004c80",
             strokeOpacity: 0.8,
-            fillColor: "#fff",
+            fillColor: bgColor,
             fillOpacity: 0.5,
           });
 
