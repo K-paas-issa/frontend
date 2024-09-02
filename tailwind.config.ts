@@ -9,21 +9,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        black: {
-          DEFAULT: "#212529",
-        },
-        white: {
-          DEFAULT: "#ffffff",
-        },
-        yellow: {
-          DEFAULT: "#ffb742",
-        },
-        gray: {
-          DEFAULT: "#fafafa",
-        },
-        blue: {
-          DEFAULT: "#254a65",
-        },
+        black: "#1B1B1B",
+        white: "#FFFFFF",
+        gray_01: "#EEEEEE",
+        gray_02: "#D8D8D8",
+        gray_03: "#B4B4B4",
+        gray_04: "#929292",
+        gray_05: "#696969",
+        gray_06: "#454545",
+        risk_01: "#FFE2A7",
+        risk_02: "#FFB724",
+        risk_03: "#EB003B",
+        risk_04: "#8D0023",
       },
       fontFamily: {
         Pretendard: ["Pretendard"],
