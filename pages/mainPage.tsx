@@ -1,8 +1,8 @@
 import React from "react";
-import { Map } from "@/components/organism";
+import { KakaoMap } from "@/components/organism";
 
 const MainPage = () => {
-  return <Map />;
+  return <KakaoMap />;
 };
 
 export default MainPage;

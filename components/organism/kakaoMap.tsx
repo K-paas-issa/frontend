@@ -19,7 +19,7 @@ export interface AreaInfo {
   status: string;
 }
 
-export function Map() {
+export function KakaoMap() {
   const [map, setMap] = useState<any>(null);
   let polygons: any[] = []; // polygon 정보 저장
   let detailMode = false; // 지도의 줌 레벨 상태 확인
@@ -47,6 +47,8 @@ export function Map() {
     };
   };
 
+  // 키가 string이고 값이 number인 Map 객체 선언
+  const eachAreasRisk: Map<string, number> = new Map();
   const [allAreaList, setAllAreaList] = useState<AreaInfo[]>([]);
   const [areaInfo, setAreaInfo] = useState<AreaInfo | null>(null);
   let selectedMarker: any = null;
@@ -96,6 +98,14 @@ export function Map() {
       },
     ]);
   }, []);
+
+  useEffect(() => {
+    if (allAreaList) {
+      allAreaList.forEach((area) => {
+        eachAreasRisk.set(area.areaName, area.risk);
+      });
+    }
+  }, [allAreaList]);
 
   const onMapClick = () => {
     if (selectedMarker) {

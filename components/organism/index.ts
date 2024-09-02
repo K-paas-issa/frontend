@@ -5,4 +5,4 @@ export { DetailPopup } from "./detailPopup";
 export { Header } from "./header";
 export { ReportModal } from "./reportModal";
 export { TopNotice } from "./topNotice";
-export { Map } from "./map";
+export { KakaoMap } from "./kakaoMap";
