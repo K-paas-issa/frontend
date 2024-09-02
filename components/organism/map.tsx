@@ -36,41 +36,8 @@ export function Map() {
     };
   };
 
-  // 지도 zoom level 에 따른 다른 json 파일 선택
-  const settingJsonFileByZoomLevel = () => {
-    const level = map.getLevel();
-    if (!detailMode && level <= 10) {
-      detailMode = true;
-      removePolygons();
-      createPolygonAndAreaData(map, "data/sig.json");
-    } else if (detailMode && level > 10) {
-      detailMode = false;
-      removePolygons();
-      createPolygonAndAreaData(map, "data/sido.json");
-    }
-  };
-
-  // 선택한 json 파일을 활용하여 폴리곤과 지역 이름 데이터 생성
-  const createPolygonAndAreaData = (map: any, file: string) => {
-    fetch(file)
-      .then((res) => res.json())
-      .then((data) => {
-        const newPolygons = createPolygonAndArea(map, data);
-        polygons = newPolygons;
-      })
-      .catch((error) => console.error("데이터 로딩 실패", error));
-  };
-
-  // 모든 폴리곤 제거
-  const removePolygons = () => {
-    polygons.forEach(([polygon]) => {
-      polygon.setMap(null);
-    });
-    polygons = [];
-  };
-
   // 데이터에 따른 구역별 폴리곤 생성
-  const createPolygonAndArea = (map: any, geoJsonData: any) => {
+  const createEachPolygon = (map: any, geoJsonData: any) => {
     const newPolygons: any[] = [];
 
     if (geoJsonData && geoJsonData.features) {
@@ -97,14 +64,47 @@ export function Map() {
     return newPolygons;
   };
 
+  // 선택한 json 파일을 활용하여 폴리곤에 따른 지역 이름과 데이터 생성
+  const drawPolygonsBySelectedJsonFile = (map: any, file: string) => {
+    fetch(file)
+      .then((res) => res.json())
+      .then((data) => {
+        const newPolygons = createEachPolygon(map, data);
+        polygons = newPolygons;
+      })
+      .catch((error) => console.error("데이터 로딩 실패", error));
+  };
+
+  // 모든 폴리곤 제거
+  const removePolygons = () => {
+    polygons.forEach(([polygon]) => {
+      polygon.setMap(null);
+    });
+    polygons = [];
+  };
+
+  // 지도 zoom level 에 따른 다른 json 파일 선택
+  const settingJsonFileByZoomLevelAndCreateEachPolygons = () => {
+    const level = map.getLevel();
+    if (!detailMode && level <= 10) {
+      detailMode = true;
+      removePolygons();
+      drawPolygonsBySelectedJsonFile(map, "data/sig.json");
+    } else if (detailMode && level > 10) {
+      detailMode = false;
+      removePolygons();
+      drawPolygonsBySelectedJsonFile(map, "data/sido.json");
+    }
+  };
+
   useEffect(() => {
     createMap();
   }, []);
 
   useEffect(() => {
     if (map) {
-      settingJsonFileByZoomLevel();
-      window.kakao.maps.event.addListener(map, "zoom_changed", settingJsonFileByZoomLevel);
+      settingJsonFileByZoomLevelAndCreateEachPolygons();
+      window.kakao.maps.event.addListener(map, "zoom_changed", settingJsonFileByZoomLevelAndCreateEachPolygons);
     }
   }, [map]);
 
