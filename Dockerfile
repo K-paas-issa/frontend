@@ -30,4 +30,4 @@ USER nextjs
 EXPOSE 3000
 
 # 앱 실행
-CMD ["node", "server.js"]
+CMD ["npx", "next", "start"]
