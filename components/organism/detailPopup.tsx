@@ -1,5 +1,5 @@
 import React from "react";
-import { AreaInfo } from "./map";
+import { AreaInfo } from "./kakaoMap";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "../atom";
 
