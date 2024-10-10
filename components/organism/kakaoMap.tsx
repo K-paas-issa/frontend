@@ -15,6 +15,7 @@ export interface AreaInfo {
   lon: number;
   risk: number;
   areaName: string;
+  areaNum: number;
   reportCount: number;
   status: string;
 }
@@ -65,7 +66,8 @@ export function KakaoMap() {
         lat: 37.529521713,
         lon: 126.964540921,
         risk: 3.4,
-        areaName: "용산구",
+        areaName: "메리츠화재 봉래동1빌딩, 세종대로5길, 봉래동1가, 회현동, 중구, 서울, 04512, 대한민국",
+        areaNum: 42720,
         reportCount: 3,
         status: "미처리",
       },
@@ -74,7 +76,8 @@ export function KakaoMap() {
         lat: 37.57037778,
         lon: 126.9816417,
         risk: 5.1,
-        areaName: "종로구",
+        areaName: "서울 중구 세종대로 14 그랜드센트럴 지하2층 B203,B204호 (우)04527",
+        areaNum: 42730,
         reportCount: 10,
         status: "미처리",
       },
@@ -83,7 +86,8 @@ export function KakaoMap() {
         lat: 37.523611113,
         lon: 126.8983417,
         risk: 1.4,
-        areaName: "영등포구",
+        areaName: "설악로, 임천리, 양양군, 강원특별자치도, 25035, 대한민국",
+        areaNum: 42750,
         reportCount: 1,
         status: "처리",
       },
@@ -92,7 +96,18 @@ export function KakaoMap() {
         lat: 37.59996944,
         lon: 126.9312417,
         risk: 2.3,
-        areaName: "은평구",
+        areaName: "교촌리, 상주시, 경상북도, 37107, 대한민국",
+        areaNum: 41111,
+        reportCount: 1,
+        status: "처리",
+      },
+      {
+        id: 5,
+        lat: 37.59996944,
+        lon: 126.9312417,
+        risk: 3.3,
+        areaName: "55, 한강대로23길, 한강로3가, 한강로동, 용산구, 서울, 04377, 대한민국",
+        areaNum: 41115,
         reportCount: 1,
         status: "처리",
       },
@@ -104,7 +119,7 @@ export function KakaoMap() {
     const newRiskMap = new Map<string, number>();
 
     allAreaList.forEach((area) => {
-      newRiskMap.set(area.areaName, area.risk);
+      newRiskMap.set(area.areaNum.toString(), area.risk);
     });
 
     setEachAreasRisk(newRiskMap);
@@ -190,29 +205,30 @@ export function KakaoMap() {
       geoJsonData.features.forEach((feature: any) => {
         if (feature.geometry && feature.geometry.type === "Polygon" && feature.properties) {
           const coordinates = feature.geometry.coordinates[0];
+          const areaNum = feature.properties.SIG_CD;
           const areaName = feature.properties.SIG_KOR_NM;
           const path = coordinates.map(([lng, lat]: [number, number]) => new window.kakao.maps.LatLng(lat, lng));
           let bgColor = "#ffffff";
 
-          if (eachAreasRisk.has(areaName)) {
-            const riskValue = eachAreasRisk.get(areaName);
-            if (riskValue !== undefined) {
-              if (riskValue >= 1 && riskValue < 2) {
-                bgColor = "#FFE2A7";
+          eachAreasRisk.forEach((value, key) => {
+            if (key === areaNum.toString()) {
+              const riskValue = value;
+              if (riskValue !== undefined) {
+                if (riskValue >= 1 && riskValue < 2) {
+                  bgColor = "#FFE2A7";
+                }
+                if (riskValue >= 2 && riskValue < 3) {
+                  bgColor = "#FFB724";
+                }
+                if (riskValue >= 3 && riskValue < 4) {
+                  bgColor = "#EB003B";
+                }
+                if (riskValue >= 4) {
+                  bgColor = "#8D0023";
+                }
               }
-              if (riskValue >= 2 && riskValue < 3) {
-                bgColor = "#FFB724";
-              }
-              if (riskValue >= 3 && riskValue < 4) {
-                bgColor = "#EB003B";
-              }
-              if (riskValue >= 4) {
-                bgColor = "#8D0023";
-              }
-            } else {
-              console.error(`Risk value for ${areaName} is undefined.`);
             }
-          }
+          });
 
           const polygon = new window.kakao.maps.Polygon({
             map: map,
@@ -260,7 +276,7 @@ export function KakaoMap() {
     } else if (detailMode && level > 10) {
       detailMode = false;
       removePolygons();
-      drawPolygonsBySelectedJsonFile(map, "data/sido.json");
+      drawPolygonsBySelectedJsonFile(map, "data/sig.json");
     }
   };
 
