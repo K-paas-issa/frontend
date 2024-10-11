@@ -8,7 +8,7 @@ export const DetailPopup = ({ info, onClick }: { info: AreaInfo | null; onClick:
     info && (
       <div
         className={cn(
-          `flex items-center justify-between w-11/12 z-10 absolute bottom-[24px] left-[18px] border border-[2px] bg-white rounded-[8px] px-[20px] py-[16px] cursor-pointer`,
+          `w-full flex items-center justify-between z-10 absolute bottom-[24px] border border-[2px] bg-white rounded-[8px] px-[20px] py-[16px] cursor-pointer`,
           info.risk >= 1 && info.risk < 25
             ? "border-risk_01"
             : info.risk >= 25 && info.risk < 50

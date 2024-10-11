@@ -412,7 +412,12 @@ export function KakaoMap() {
           <ResetLocation />
         </Button>
       </div>
-      {areaInfo && <DetailPopup info={areaInfo} onClick={() => handleGoToDetailPage(areaInfo)} />}
+
+      {areaInfo && (
+        <div className="relative w-[98%] mx-auto">
+          <DetailPopup info={areaInfo} onClick={() => handleGoToDetailPage(areaInfo)} />
+        </div>
+      )}
     </div>
   );
 }
