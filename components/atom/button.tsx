@@ -10,6 +10,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-black text-white rounded-[48px] hover:bg-black/90",
+        iconButton: "border border-gray_03 rounded-[8px]",
+        sky: "bg-blue text-white rounded-[48px] hover:bg-blue/90",
+        text: "text-black body2",
       },
       size: {
         default: "px-4 py-3",
