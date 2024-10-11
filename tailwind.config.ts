@@ -11,6 +11,7 @@ const config: Config = {
       colors: {
         black: "#1B1B1B",
         white: "#FFFFFF",
+        blue: "#0BA1FF",
         gray_01: "#EEEEEE",
         gray_02: "#D8D8D8",
         gray_03: "#B4B4B4",
@@ -55,7 +56,7 @@ const config: Config = {
         ".subtitle1": {
           fontSize: "16px",
           lineHeight: "22px",
-          fontWeight: "semibold",
+          fontWeight: "bold",
           "@screen md": {
             fontSize: "18px",
             lineHeight: "24px",
@@ -64,7 +65,7 @@ const config: Config = {
         ".subtitle2": {
           fontSize: "14px",
           lineHeight: "22px",
-          fontWeight: "semibold",
+          fontWeight: "bold",
           "@screen md": {
             fontSize: "16px",
             lineHeight: "24px",
