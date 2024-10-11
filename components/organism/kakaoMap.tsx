@@ -26,7 +26,7 @@ export interface AreaInfo {
 
 export function KakaoMap() {
   const { push } = useRouter();
-  const { dialogOpen, dialogClose } = useDialogContext();
+  const { isDialogOpen, dialogOpen, dialogClose } = useDialogContext();
 
   const [map, setMap] = useState<any>(null);
   let polygons: any[] = []; // polygon 정보 저장
@@ -360,31 +360,55 @@ export function KakaoMap() {
     );
   };
 
+  const handleReport = () => {
+    dialogClose(`reportConfirm`);
+
+    setTimeout(() => {
+      dialogOpen(`reportResult`);
+    }, 100);
+  };
+
   return (
     <div className="w-full relative">
-      <SimpleAlarmDialog
-        id="reportConfirm"
-        title="신고하기"
-        message={
-          <div className="body2 space-y-[2px]">
-            <div>현재 위치는 아래와 같습니다.</div>
-            <div className="text-blue subtitle2">
-              {currentLocation?.latitude} / {currentLocation?.longitude}
-            </div>
-            <div>현재 위치에 대한 신고를 진행하시겠습니까?</div>
-          </div>
-        }
-        onClose={() => {
-          dialogClose("reportConfirm");
-        }}
-        options={
-          <div className="w-full flex flex-col gap-[8px]">
-            <Button variant="sky">접수하기</Button>
-            <Button variant="text">취소</Button>
-          </div>
-        }
-      />
       <div id="map" style={{ width: "100%", height: "100vh" }} />
+      {isDialogOpen("reportConfirm") && (
+        <SimpleAlarmDialog
+          id="reportConfirm"
+          title="신고하기"
+          message={<div className="body2">현재 위치에 대한 신고를 진행하시겠습니까?</div>}
+          options={
+            <div className="w-full flex flex-col gap-[8px]">
+              <Button variant="sky" className="w-full" onClick={handleReport}>
+                접수하기
+              </Button>
+              <Button variant="text" className="w-full">
+                취소
+              </Button>
+            </div>
+          }
+        />
+      )}
+      {isDialogOpen("reportResult") && (
+        <SimpleAlarmDialog
+          id="reportResult"
+          title="알림"
+          message={
+            <div className="body2 space-y-[2px]">
+              <div>신고가 정상 접수되었습니다.</div>
+              <div className="text-green pt-[12px]">
+                <div>신고일자: 2024.01.01</div>
+                <div>신고위치: 서울특별시 동작구 등용로</div>
+              </div>
+            </div>
+          }
+          options={
+            <Button variant="sky" className="w-full">
+              확인
+            </Button>
+          }
+        />
+      )}
+
       <div>
         <Button
           variant="iconButton"
@@ -399,7 +423,7 @@ export function KakaoMap() {
           className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
             areaInfo ? "bottom-[185px] right-[18px]" : "bottom-[79px] right-[18px]"
           }`}
-          onClick={() => dialogOpen("report")}
+          onClick={() => dialogOpen("reportConfirm")}
         >
           <Report />
         </Button>
