@@ -1,13 +1,34 @@
-import { ArrowRight, Input, Send } from "@/components/atom";
+import { ArrowRight, Button, Input, Send } from "@/components/atom";
 import { Comment } from "@/components/organism";
+import { SimpleAlarmDialog } from "@/components/organism/simpleAlarmDialog";
+import { useDialogContext } from "@/lib";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 
 const DetailPage = () => {
+  const { dialogOpen, isDialogOpen } = useDialogContext();
   const searchParams = useSearchParams();
   const administrativeDistrict = searchParams && searchParams.get("administrative_district");
   const risk = searchParams && Number(searchParams.get("risk"));
+
+  const [comment, setComment] = useState("");
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setComment(e.target.value);
+  };
+
+  const handleSendMessage = () => {
+    if (comment === "") {
+      dialogOpen("isCommentEmpty");
+    } else {
+      dialogOpen("uploadCommentSuccess");
+    }
+  };
+
+  const handleDeleteComment = (id: number) => {
+    dialogOpen(`deleteComment${id}`);
+  };
 
   const commentTest = [
     {
@@ -116,16 +137,48 @@ const DetailPage = () => {
           commentTest.map((comment) => (
             <Comment
               key={comment.id}
+              id={comment.id}
               content={comment.content}
               createdAt={comment.createdAt}
               isWriter={comment.isWriter}
+              onDelete={() => handleDeleteComment(comment.id)}
             />
           ))}
       </div>
       <div className="relative flex items-center gap-[8px] w-[98%] mx-auto mt-[20px]">
-        <Input className="w-full h-[52px] bottom-[24px]" placeholder="댓글을 입력해주세요" />
-        <Send />
+        <Input
+          className="w-full h-[52px] bottom-[24px]"
+          placeholder="댓글을 입력해주세요"
+          onChange={handleContentChange}
+        />
+        <div onClick={handleSendMessage}>
+          <Send />
+        </div>
       </div>
+      {isDialogOpen("isCommentEmpty") && (
+        <SimpleAlarmDialog
+          id="isCommentEmpty"
+          title="알림"
+          message={"내용을 입력해주세요"}
+          options={
+            <Button variant="sky" className="w-full">
+              확인
+            </Button>
+          }
+        />
+      )}
+      {isDialogOpen("uploadCommentSuccess") && (
+        <SimpleAlarmDialog
+          id="uploadCommentSuccess"
+          title="알림"
+          message={"댓글이 등록되었습니다"}
+          options={
+            <Button variant="sky" className="w-full">
+              확인
+            </Button>
+          }
+        />
+      )}
     </div>
   );
 };

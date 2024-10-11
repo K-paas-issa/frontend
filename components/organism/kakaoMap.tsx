@@ -363,6 +363,7 @@ export function KakaoMap() {
   return (
     <div className="w-full relative">
       <SimpleAlarmDialog
+        id="reportConfirm"
         title="신고하기"
         message={
           <div className="body2 space-y-[2px]">
@@ -374,7 +375,7 @@ export function KakaoMap() {
           </div>
         }
         onClose={() => {
-          dialogClose();
+          dialogClose("reportConfirm");
         }}
         options={
           <div className="w-full flex flex-col gap-[8px]">
@@ -398,7 +399,7 @@ export function KakaoMap() {
           className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
             areaInfo ? "bottom-[185px] right-[18px]" : "bottom-[79px] right-[18px]"
           }`}
-          onClick={dialogOpen}
+          onClick={() => dialogOpen("report")}
         >
           <Report />
         </Button>

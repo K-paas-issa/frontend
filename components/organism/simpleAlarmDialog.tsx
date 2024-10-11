@@ -1,4 +1,3 @@
-import { Button } from "@/components/atom";
 import {
   Dialog,
   DialogClose,
@@ -12,17 +11,17 @@ import { useDialogContext } from "@/lib";
 import React from "react";
 
 interface SimpleAlarmDialogProps {
+  id: string;
   title?: string;
   message: string | undefined | React.ReactNode;
-  onClose: () => void;
   options?: React.ReactNode;
 }
 
-const SimpleAlarmDialog = React.memo(({ title, message, options }: SimpleAlarmDialogProps) => {
+const SimpleAlarmDialog = React.memo(({ id, title, message, options }: SimpleAlarmDialogProps) => {
   const { isDialogOpen, dialogClose } = useDialogContext();
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={dialogClose}>
+    <Dialog open={isDialogOpen(id)} onOpenChange={() => dialogClose(id)}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title ? title : "알림"}</DialogTitle>
