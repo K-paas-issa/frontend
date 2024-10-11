@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/molecule";
+import { DialogProvider } from "@/lib";
 
 export const metadata: Metadata = {
   title: "오물풍선 알리미",
@@ -16,8 +17,10 @@ export default function RootLayout({
     <html lang="ko">
       <head></head>
       <body>
-        {children}
-        <Toaster />
+        <DialogProvider>
+          {children}
+          <Toaster />
+        </DialogProvider>
       </body>
     </html>
   );
