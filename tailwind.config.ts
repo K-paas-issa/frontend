@@ -116,6 +116,11 @@ const config: Config = {
             lineHeight: "18px",
           },
         },
+        ".placeholder": {
+          fontSize: "14px",
+          lineHeight: "22px",
+          fontWeight: "regular",
+        },
       });
     }),
   ],
