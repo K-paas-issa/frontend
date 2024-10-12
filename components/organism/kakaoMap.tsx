@@ -143,7 +143,7 @@ export function KakaoMap() {
         setCurrentLocation({ latitude, longitude });
         createMap(latitude, longitude); // 지도 생성
       } catch (error) {
-        console.error("초기화 오류:", error);
+        setCurrentLocation({ latitude: 37.5665, longitude: 126.978 });
         createMap(37.5665, 126.978); // 오류 시 기본 좌표 (서울)로 지도 생성
         setLoading(false);
       }
@@ -387,7 +387,7 @@ export function KakaoMap() {
         setCurrentLocationMarkerOnMap(latitude, longitude); // 지도 중심과 마커를 업데이트
       })
       .catch((error) => {
-        console.error("위치 정보를 다시 가져오지 못했습니다.", error);
+        console.error("위치 정보를 가져오지 못했습니다.", error);
       });
   };
 
