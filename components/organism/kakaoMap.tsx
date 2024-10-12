@@ -408,8 +408,9 @@ export function KakaoMap() {
   return (
     <div className="w-full relative">
       {loading && (
-        <div className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] text-[44px]">
+        <div className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
           <LoadingSpinner />
+          <div className="text-[24px] mt-[24px]">지도 로딩중...</div>
         </div>
       )}{" "}
       {/* 로딩 스피너 */}
