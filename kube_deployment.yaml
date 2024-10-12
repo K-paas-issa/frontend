@@ -4,33 +4,32 @@ metadata:
   name: frontend-service
 spec:
   selector:
-    app: bk
+    app: contest73
     tier: frontend
   type: NodePort
   ports:
     - protocol: TCP
       port: 80
-      nodePort: 31001
       targetPort: 3000
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-deployment
+  name: contest73-frontend-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: bk
+      app: contest73
       tier: frontend
   template:
     metadata:
       labels:
-        app: bk
+        app: contest73
         tier: frontend
     spec:
       containers:
-        - name: bk
-          image: beank99/bk-frontend
+        - name: frontend
+          image: beank99/contest73-frontend
           ports:
             - containerPort: 3000

@@ -1,33 +1,59 @@
-# 빌드 단계
-FROM node:20-alpine AS builder
+# # 1. 빌드 스테이지
+# FROM node:20-alpine AS builder
+
+# WORKDIR /app
+
+# # package.json과 package-lock.json 복사
+# COPY package*.json ./
+
+# # npm install 실행
+# RUN npm install
+
+# # 소스 코드 복사
+# COPY . .
+
+# # Next.js 애플리케이션 빌드
+# RUN npm run build
+
+# # 2. 실행 스테이지
+# FROM node:20-alpine AS runner
+
+# WORKDIR /app
+
+# # 빌드된 파일 복사
+# COPY --from=builder /app/.next/standalone ./
+# COPY --from=builder /app/.next/static ./.next/static
+# COPY --from=builder /app/public ./public
+# COPY --from=builder /app/package.json ./package.json
+
+# # 포트 설정
+# EXPOSE 3000
+
+# # 애플리케이션 실행
+# CMD ["npm", "start"]
+
+
+# 1. Node.js 16 버전의 베이스 이미지 사용 (권장)
+FROM node:20
+
+# 2. 작업 디렉터리 생성
 WORKDIR /app
 
-# 패키지 파일 복사 및 종속성 설치
-COPY package.json package-lock.json ./
+# 3. package.json과 package-lock.json 복사
+COPY package*.json ./
+
+# 4. 의존성 설치
 RUN npm install
 
-# 소스 파일 복사 및 빌드
+# 5. 앱 소스 코드 복사
 COPY . .
+
+# 6. Next.js 빌드
 RUN npm run build
 
-# 프로덕션 이미지
-FROM node:20-alpine
-WORKDIR /app
-
-# 애플리케이션 실행에 필요한 사용자 추가
-RUN addgroup -S nextjs && adduser -S nextjs -G nextjs
-
-# 빌드 단계에서 생성된 standalone 폴더와 필요한 파일만 복사
-COPY --from=builder --chown=nextjs:nextjs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nextjs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nextjs /app/public ./public
-COPY --from=builder --chown=nextjs:nextjs /app/package.json ./package.json
-
-# 사용자 권한 설정
-USER nextjs
-
-# 포트 노출
+# 7. 포트 설정
 EXPOSE 3000
 
-# 앱 실행
-CMD ["npx", "next", "start"]
+# 8. Next.js 서버 실행
+CMD ["npm", "start"]
+
