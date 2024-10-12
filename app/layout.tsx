@@ -16,9 +16,7 @@ export default function RootLayout({
     <html lang="ko">
       <body>
         <QueryClientProvider>
-          <DialogProvider>
-            <div className="w-screen">{children}</div>
-          </DialogProvider>
+          <DialogProvider>{children}</DialogProvider>
         </QueryClientProvider>
       </body>
     </html>
