@@ -3,10 +3,11 @@ import { Comment } from "@/components/organism";
 import { SimpleAlarmDialog } from "@/components/organism";
 import { useDialogContext } from "@/lib";
 import { cn } from "@/lib/utils";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 
 const DetailPage = () => {
+  const { back } = useRouter();
   const { dialogOpen, isDialogOpen } = useDialogContext();
   const searchParams = useSearchParams();
   const administrativeDistrict = searchParams && searchParams.get("administrative_district");
@@ -104,7 +105,7 @@ const DetailPage = () => {
   return (
     <div className="w-full h-full relative">
       <div className="w-full h-[60px] flex items-center px-[16px] bg-blue/10">
-        <div className="rotate-180">
+        <div className="rotate-180 cursor-pointer" onClick={back}>
           <ArrowRight />
         </div>
         <div className="pt-[4px] m-auto subtitle1">커뮤니티</div>
