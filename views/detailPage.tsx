@@ -1,6 +1,6 @@
 import { ArrowRight, Button, Input, Send } from "@/components/atom";
 import { Comment } from "@/components/organism";
-import { SimpleAlarmDialog } from "@/components/organism/simpleAlarmDialog";
+import { SimpleAlarmDialog } from "@/components/organism";
 import { useDialogContext } from "@/lib";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";

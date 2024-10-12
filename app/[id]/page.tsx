@@ -1,6 +1,6 @@
 "use client";
 
-import DetailPage from "@/pages/detailPage";
+import DetailPage from "@/views/detailPage";
 
 const page = () => {
   return <DetailPage />;
