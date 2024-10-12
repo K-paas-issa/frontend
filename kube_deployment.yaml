@@ -6,7 +6,7 @@ spec:
   selector:
     app: contest73
     tier: frontend
-  type: NodePort
+  type: LoadBalancer
   ports:
     - protocol: TCP
       port: 80
