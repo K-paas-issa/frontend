@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { DetailPopup } from "./detailPopup";
 import { useRouter } from "next/navigation";
-import { Button, Police, Report, ResetLocation } from "../atom";
+import { Button, Police, Report, ResetLocation, LoadingSpinner } from "../atom";
 import { SimpleAlarmDialog } from "./simpleAlarmDialog";
 import { useDialogContext } from "@/lib";
 
@@ -29,6 +29,7 @@ export function KakaoMap() {
   const { isDialogOpen, dialogOpen, dialogClose } = useDialogContext();
 
   const [map, setMap] = useState<any>(null);
+  const [loading, setLoading] = useState(true); // 로딩 상태 관리
   let polygons: any[] = []; // polygon 정보 저장
   let detailMode = false; // 지도의 줌 레벨 상태 확인
   // 사용자의 현재 위치
@@ -60,27 +61,58 @@ export function KakaoMap() {
     });
   };
 
-  // 초기 지도 생성
-  const createMap = (latitude: number, longitude: number) => {
-    const script = document.createElement("script");
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAOJSKEY}&autoload=false`;
-    document.head.appendChild(script);
-
-    script.onload = () => {
+  // 카카오맵 스크립트 로드
+  const loadKakaoMapScript = () => {
+    return new Promise<void>((resolve, reject) => {
       if (window.kakao && window.kakao.maps) {
-        window.kakao.maps.load(() => {
-          const mapContainer = document.getElementById("map");
-          if (mapContainer) {
-            const mapOption = {
-              center: new window.kakao.maps.LatLng(latitude, longitude),
-              level: 7,
-            };
-            const map = new window.kakao.maps.Map(mapContainer, mapOption);
-            setMap(map);
-          }
-        });
+        resolve(); // 이미 스크립트가 로드된 경우
+      } else {
+        const script = document.createElement("script");
+        script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAOJSKEY}&autoload=false`;
+        script.async = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject("카카오 맵 스크립트 로드 실패");
+        document.head.appendChild(script);
       }
-    };
+    });
+  };
+
+  // 초기 지도 생성
+  // const createMap = (latitude: number, longitude: number) => {
+  //   const script = document.createElement("script");
+  //   script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAOJSKEY}&autoload=false`;
+  //   document.head.appendChild(script);
+
+  //   script.onload = () => {
+  //     if (window.kakao && window.kakao.maps) {
+  //       window.kakao.maps.load(() => {
+  //         const mapContainer = document.getElementById("map");
+  //         if (mapContainer) {
+  //           const mapOption = {
+  //             center: new window.kakao.maps.LatLng(latitude, longitude),
+  //             level: 7,
+  //           };
+  //           const map = new window.kakao.maps.Map(mapContainer, mapOption);
+  //           setMap(map);
+  //         }
+  //       });
+  //     }
+  //   };
+  // };
+
+  const createMap = (latitude: number, longitude: number) => {
+    window.kakao.maps.load(() => {
+      const mapContainer = document.getElementById("map");
+      if (mapContainer) {
+        const mapOption = {
+          center: new window.kakao.maps.LatLng(latitude, longitude),
+          level: 7,
+        };
+        const map = new window.kakao.maps.Map(mapContainer, mapOption);
+        setMap(map);
+        setLoading(false); // 로딩 완료
+      }
+    });
   };
 
   // 현재 위치 마커 생성
@@ -104,15 +136,20 @@ export function KakaoMap() {
   };
 
   useEffect(() => {
-    getLocation()
-      .then(({ latitude, longitude }) => {
+    const initializeMap = async () => {
+      try {
+        await loadKakaoMapScript(); // 카카오맵 스크립트 로드
+        const { latitude, longitude } = await getLocation(); // 현재 위치 가져오기
         setCurrentLocation({ latitude, longitude });
-        createMap(latitude, longitude); // 지도 중심을 사용자 위치로 설정
-      })
-      .catch((error) => {
-        console.error("위치 설정 오류:", error);
+        createMap(latitude, longitude); // 지도 생성
+      } catch (error) {
+        console.error("초기화 오류:", error);
         createMap(37.5665, 126.978); // 오류 시 기본 좌표 (서울)로 지도 생성
-      });
+        setLoading(false);
+      }
+    };
+
+    initializeMap(); // 초기화
   }, []);
 
   // 키가 string이고 값이 number인 Map 객체 선언
@@ -370,6 +407,12 @@ export function KakaoMap() {
 
   return (
     <div className="w-full relative">
+      {loading && (
+        <div className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] text-[44px]">
+          <LoadingSpinner />
+        </div>
+      )}{" "}
+      {/* 로딩 스피너 */}
       <div id="map" style={{ width: "100%", height: "100vh" }} />
       {isDialogOpen("reportConfirm") && (
         <SimpleAlarmDialog
@@ -408,7 +451,6 @@ export function KakaoMap() {
           }
         />
       )}
-
       <div>
         <Button
           variant="iconButton"
@@ -437,7 +479,6 @@ export function KakaoMap() {
           <ResetLocation />
         </Button>
       </div>
-
       {areaInfo && (
         <div className="relative w-[98%] mx-auto">
           <DetailPopup info={areaInfo} onClick={() => handleGoToDetailPage(areaInfo)} />
