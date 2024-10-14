@@ -1,5 +1,5 @@
 import React from "react";
-import { AreaInfo } from "./kakaoMap";
+import { AreaInfo } from "@/api";
 import { cn } from "@/lib/utils";
 import { ArrowRight, Report } from "../atom";
 
@@ -37,7 +37,7 @@ export const DetailPopup = ({ info, onClick }: { info: AreaInfo | null; onClick:
                   : ""
               )}
             >
-              {info.administrative_district}
+              {info.administrativeDistrict}
             </div>
           </div>
           <div className="flex items-end">

@@ -3,25 +3,16 @@
 import { useEffect, useState } from "react";
 import { DetailPopup } from "./detailPopup";
 import { useRouter } from "next/navigation";
-import { Button, Police, Report, ResetLocation, LoadingSpinner } from "../atom";
+import { Button, Police, Report, LoadingSpinner } from "../atom";
 import { SimpleAlarmDialog } from "./simpleAlarmDialog";
 import { useDialogContext } from "@/lib";
+import { useKakaomap } from "./useKakaomap";
+import { AreaInfo } from "@/api";
 
 declare global {
   interface Window {
     kakao: any;
   }
-}
-
-export interface AreaInfo {
-  id: number;
-  latitude: number;
-  longitude: number;
-  risk: number;
-  administrative_district: string;
-  district_code: number;
-  reportCount: number;
-  status: string;
 }
 
 export function KakaoMap() {
@@ -32,12 +23,13 @@ export function KakaoMap() {
   const [loading, setLoading] = useState(true); // 로딩 상태 관리
   let polygons: any[] = []; // polygon 정보 저장
   let detailMode = false; // 지도의 줌 레벨 상태 확인
+
   // 사용자의 현재 위치
   // const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   // const [currentLocationMarker, setCurrentLocationMarker] = useState<any>(null);
 
-  const myLocationMarkerImage =
-    map && new window.kakao.maps.MarkerImage("/assets/myLocation.png", new window.kakao.maps.Size(40, 40));
+  // const myLocationMarkerImage =
+  //   map && new window.kakao.maps.MarkerImage("/assets/myLocation.png", new window.kakao.maps.Size(40, 40));
 
   // 현재 위치 가져오기
   // const getLocation = () => {
@@ -149,55 +141,16 @@ export function KakaoMap() {
   const [areaInfo, setAreaInfo] = useState<AreaInfo | null>(null);
   let selectedMarker: any = null;
 
+  const { balloonList } = useKakaomap();
+
   const defaultMarkerImage =
-    map && new window.kakao.maps.MarkerImage("/assets/default_marker.png", new window.kakao.maps.Size(38, 42));
+    map && new window.kakao.maps.MarkerImage("/assets/balloon.png", new window.kakao.maps.Size(45, 45));
   const selectedMarkerImage =
-    map && new window.kakao.maps.MarkerImage("/assets/selected_marker.png", new window.kakao.maps.Size(38, 42));
+    map && new window.kakao.maps.MarkerImage("/assets/balloon.png", new window.kakao.maps.Size(55, 55));
 
   useEffect(() => {
-    setAllAreaList([
-      {
-        id: 1,
-        latitude: 37.529521713,
-        longitude: 126.964540921,
-        risk: 65.5,
-        administrative_district: "서울특별시 강북구 천호동",
-        district_code: 42720,
-        reportCount: 3,
-        status: "미처리",
-      },
-      {
-        id: 2,
-        latitude: 37.57037778,
-        longitude: 126.9816417,
-        risk: 87.2,
-        administrative_district: "서울특별시 동대문구 신설동",
-        district_code: 42730,
-        reportCount: 10,
-        status: "미처리",
-      },
-      {
-        id: 3,
-        latitude: 37.523611113,
-        longitude: 126.8983417,
-        risk: 17.2,
-        administrative_district: "강원도 고성군 죽왕면 오호리",
-        district_code: 42750,
-        reportCount: 2,
-        status: "처리",
-      },
-      {
-        id: 3,
-        latitude: 37.5643562,
-        longitude: 127.0152552,
-        risk: 31,
-        administrative_district: "서울특별시 중구 무학동",
-        district_code: 42790,
-        reportCount: 7,
-        status: "처리",
-      },
-    ]);
-  }, []);
+    if (balloonList) setAllAreaList(balloonList);
+  }, [balloonList]);
 
   const onMapClick = () => {
     if (selectedMarker) {
@@ -225,18 +178,18 @@ export function KakaoMap() {
       image: defaultMarkerImage,
     });
 
-    const overlayContent =
-      '<div style="font-size: 16px; font-weight: 700; position: relative; color: #FFFFFF; top: -20px; left: 2px; pointer-events: none;">' +
-      info.reportCount +
-      "</div>";
+    // const overlayContent =
+    //   '<div style="font-size: 16px; font-weight: 700; position: relative; color: #FFFFFF; top: -20px; left: 2px; pointer-events: none;">' +
+    //   info.reportCount +
+    //   "</div>";
 
-    const overlay = new window.kakao.maps.CustomOverlay({
-      content: overlayContent,
-      map: map,
-      position: marker.getPosition(),
-    });
+    // const overlay = new window.kakao.maps.CustomOverlay({
+    //   content: overlayContent,
+    //   map: map,
+    //   position: marker.getPosition(),
+    // });
 
-    overlay.setMap(map);
+    // overlay.setMap(map);
 
     window.kakao.maps.event.addListener(marker, "click", function () {
       changeMarkerImage(marker);
@@ -255,7 +208,7 @@ export function KakaoMap() {
         if (feature.geometry && feature.geometry.type === "Polygon" && feature.properties) {
           const coordinates = feature.geometry.coordinates[0];
           const district_code = feature.properties.SIG_CD;
-          const administrative_district = feature.properties.SIG_KOR_NM;
+          const administrativeDistrict = feature.properties.SIG_KOR_NM;
           const path = coordinates.map(([lng, lat]: [number, number]) => new window.kakao.maps.LatLng(lat, lng));
           let bgColor = "#ffffff";
 
@@ -290,7 +243,7 @@ export function KakaoMap() {
             fillOpacity: 0.5,
           });
 
-          newPolygons.push([polygon, administrative_district]);
+          newPolygons.push([polygon, administrativeDistrict]);
         }
       });
     }
@@ -335,7 +288,7 @@ export function KakaoMap() {
     const newRiskMap = new Map<string, number>();
 
     allAreaList.forEach((area) => {
-      newRiskMap.set(area.district_code.toString(), area.risk);
+      newRiskMap.set(area.districtCode?.toString(), area.risk);
     });
 
     setEachAreasRisk(newRiskMap);
@@ -363,16 +316,16 @@ export function KakaoMap() {
   }, [map, allAreaList]);
 
   useEffect(() => {
-    // if (map && currentLocation) {
+    // if (map && currentLocation)
     //   setCurrentLocationMarkerOnMap(currentLocation.latitude, currentLocation.longitude); // 마커 생성
     //   settingJsonFileByZoomLevelAndCreateEachPolygons();
     //   window.kakao.maps.event.addListener(map, "zoom_changed", settingJsonFileByZoomLevelAndCreateEachPolygons);
     // }
-    if (map) {
+    if (map && balloonList) {
       settingJsonFileByZoomLevelAndCreateEachPolygons();
       window.kakao.maps.event.addListener(map, "zoom_changed", settingJsonFileByZoomLevelAndCreateEachPolygons);
     }
-  }, [map]);
+  }, [map, balloonList]);
 
   // ResetLocation 버튼 클릭 시 내 위치로 이동
   // const handleResetLocation = () => {
@@ -387,9 +340,7 @@ export function KakaoMap() {
   // };
 
   const handleGoToDetailPage = (areaInfo: AreaInfo) => {
-    push(
-      `/${areaInfo.district_code}?administrative_district=${areaInfo.administrative_district}&risk=${areaInfo.risk}`
-    );
+    push(`/${areaInfo.districtCode}?administrativeDistrict=${areaInfo.administrativeDistrict}&risk=${areaInfo.risk}`);
   };
 
   const handleReport = () => {
@@ -440,6 +391,18 @@ export function KakaoMap() {
               </div>
             </div>
           }
+          options={
+            <Button variant="sky" className="w-full">
+              확인
+            </Button>
+          }
+        />
+      )}
+      {isDialogOpen("isBalloonError") && (
+        <SimpleAlarmDialog
+          id="isBalloonError"
+          title="알림"
+          message={<div>풍선 위치정보를 가져오지 못했습니다.</div>}
           options={
             <Button variant="sky" className="w-full">
               확인

@@ -10,7 +10,7 @@ const DetailPage = () => {
   const { back } = useRouter();
   const { dialogOpen, isDialogOpen } = useDialogContext();
   const searchParams = useSearchParams();
-  const administrativeDistrict = searchParams && searchParams.get("administrative_district");
+  const administrativeDistrict = searchParams && searchParams.get("administrativeDistrict");
   const risk = searchParams && Number(searchParams.get("risk"));
 
   const [comment, setComment] = useState("");
