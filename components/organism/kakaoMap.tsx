@@ -33,33 +33,33 @@ export function KakaoMap() {
   let polygons: any[] = []; // polygon 정보 저장
   let detailMode = false; // 지도의 줌 레벨 상태 확인
   // 사용자의 현재 위치
-  const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number } | null>(null);
-  const [currentLocationMarker, setCurrentLocationMarker] = useState<any>(null);
+  // const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  // const [currentLocationMarker, setCurrentLocationMarker] = useState<any>(null);
 
   const myLocationMarkerImage =
     map && new window.kakao.maps.MarkerImage("/assets/myLocation.png", new window.kakao.maps.Size(40, 40));
 
   // 현재 위치 가져오기
-  const getLocation = () => {
-    return new Promise<{ latitude: number; longitude: number }>((resolve, reject) => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            resolve({ latitude, longitude });
-          },
-          (error) => {
-            console.error("위치 정보를 가져오지 못했습니다.", error);
-            reject(error);
-          },
-          { enableHighAccuracy: true }
-        );
-      } else {
-        alert("Geolocation을 지원하지 않는 브라우저입니다.");
-        reject(new Error("Geolocation is not supported"));
-      }
-    });
-  };
+  // const getLocation = () => {
+  //   return new Promise<{ latitude: number; longitude: number }>((resolve, reject) => {
+  //     if (navigator.geolocation) {
+  //       navigator.geolocation.getCurrentPosition(
+  //         (position) => {
+  //           const { latitude, longitude } = position.coords;
+  //           resolve({ latitude, longitude });
+  //         },
+  //         (error) => {
+  //           console.error("위치 정보를 가져오지 못했습니다.", error);
+  //           reject(error);
+  //         },
+  //         { enableHighAccuracy: true }
+  //       );
+  //     } else {
+  //       alert("Geolocation을 지원하지 않는 브라우저입니다.");
+  //       reject(new Error("Geolocation is not supported"));
+  //     }
+  //   });
+  // };
 
   // 카카오맵 스크립트 로드
   const loadKakaoMapScript = () => {
@@ -77,35 +77,24 @@ export function KakaoMap() {
     });
   };
 
-  // 초기 지도 생성
-  // const createMap = (latitude: number, longitude: number) => {
-  //   const script = document.createElement("script");
-  //   script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAOJSKEY}&autoload=false`;
-  //   document.head.appendChild(script);
-
-  //   script.onload = () => {
-  //     if (window.kakao && window.kakao.maps) {
-  //       window.kakao.maps.load(() => {
-  //         const mapContainer = document.getElementById("map");
-  //         if (mapContainer) {
-  //           const mapOption = {
-  //             center: new window.kakao.maps.LatLng(latitude, longitude),
-  //             level: 7,
-  //           };
-  //           const map = new window.kakao.maps.Map(mapContainer, mapOption);
-  //           setMap(map);
-  //         }
-  //       });
-  //     }
-  //   };
-  // };
-
-  const createMap = (latitude: number, longitude: number) => {
+  const createMap = () => {
+    // window.kakao.maps.load(() => {
+    //   const mapContainer = document.getElementById("map");
+    //   if (mapContainer) {
+    //     const mapOption = {
+    //       center: new window.kakao.maps.LatLng(latitude, longitude),
+    //       level: 7,
+    //     };
+    //     const map = new window.kakao.maps.Map(mapContainer, mapOption);
+    //     setMap(map);
+    //     setLoading(false); // 로딩 완료
+    //   }
+    // });
     window.kakao.maps.load(() => {
       const mapContainer = document.getElementById("map");
       if (mapContainer) {
         const mapOption = {
-          center: new window.kakao.maps.LatLng(latitude, longitude),
+          center: new window.kakao.maps.LatLng(37.498095, 127.02761),
           level: 7,
         };
         const map = new window.kakao.maps.Map(mapContainer, mapOption);
@@ -115,38 +104,40 @@ export function KakaoMap() {
     });
   };
 
-  // 현재 위치 마커 생성
-  const setCurrentLocationMarkerOnMap = (latitude: number, longitude: number) => {
-    const location = new window.kakao.maps.LatLng(latitude, longitude);
+  // 현재 위치 마커 생성 -> https 없어서 일단 제거
+  // const setCurrentLocationMarkerOnMap = (latitude: number, longitude: number) => {
+  //   const location = new window.kakao.maps.LatLng(latitude, longitude);
 
-    // 기존 마커 제거
-    if (currentLocationMarker) {
-      currentLocationMarker.setMap(null);
-    }
+  //   // 기존 마커 제거
+  //   if (currentLocationMarker) {
+  //     currentLocationMarker.setMap(null);
+  //   }
 
-    // 현재 위치 마커 생성
-    const marker = new window.kakao.maps.Marker({
-      map: map,
-      position: location,
-      image: myLocationMarkerImage,
-    });
+  //   // 현재 위치 마커 생성
+  //   const marker = new window.kakao.maps.Marker({
+  //     map: map,
+  //     position: location,
+  //     image: myLocationMarkerImage,
+  //   });
 
-    setCurrentLocationMarker(marker);
-    map.setCenter(location);
-  };
+  //   setCurrentLocationMarker(marker);
+  //   map.setCenter(location);
+  // };
 
   useEffect(() => {
     const initializeMap = async () => {
-      try {
-        await loadKakaoMapScript(); // 카카오맵 스크립트 로드
-        const { latitude, longitude } = await getLocation(); // 현재 위치 가져오기
-        setCurrentLocation({ latitude, longitude });
-        createMap(latitude, longitude); // 지도 생성
-      } catch (error) {
-        setCurrentLocation({ latitude: 37.5665, longitude: 126.978 });
-        createMap(37.5665, 126.978); // 오류 시 기본 좌표 (서울)로 지도 생성
-        setLoading(false);
-      }
+      // try {
+      //   await loadKakaoMapScript(); // 카카오맵 스크립트 로드
+      //   const { latitude, longitude } = await getLocation(); // 현재 위치 가져오기
+      //   setCurrentLocation({ latitude, longitude });
+      //   createMap(latitude, longitude); // 지도 생성
+      // } catch (error) {
+      //   setCurrentLocation({ latitude: 37.498095, longitude: 127.02761 });
+      //   createMap(37.5665, 126.978); // 오류 시 기본 좌표 (서울)로 지도 생성
+      //   setLoading(false);
+      // }
+      await loadKakaoMapScript(); // 카카오맵 스크립트 로드
+      createMap(); // 지도 생성
     };
 
     initializeMap(); // 초기화
@@ -372,24 +363,28 @@ export function KakaoMap() {
   }, [map, allAreaList]);
 
   useEffect(() => {
-    if (map && currentLocation) {
-      setCurrentLocationMarkerOnMap(currentLocation.latitude, currentLocation.longitude); // 마커 생성
+    // if (map && currentLocation) {
+    //   setCurrentLocationMarkerOnMap(currentLocation.latitude, currentLocation.longitude); // 마커 생성
+    //   settingJsonFileByZoomLevelAndCreateEachPolygons();
+    //   window.kakao.maps.event.addListener(map, "zoom_changed", settingJsonFileByZoomLevelAndCreateEachPolygons);
+    // }
+    if (map) {
       settingJsonFileByZoomLevelAndCreateEachPolygons();
       window.kakao.maps.event.addListener(map, "zoom_changed", settingJsonFileByZoomLevelAndCreateEachPolygons);
     }
   }, [map]);
 
   // ResetLocation 버튼 클릭 시 내 위치로 이동
-  const handleResetLocation = () => {
-    getLocation()
-      .then(({ latitude, longitude }) => {
-        setCurrentLocation({ latitude, longitude });
-        setCurrentLocationMarkerOnMap(latitude, longitude); // 지도 중심과 마커를 업데이트
-      })
-      .catch((error) => {
-        console.error("위치 정보를 가져오지 못했습니다.", error);
-      });
-  };
+  // const handleResetLocation = () => {
+  //   getLocation()
+  //     .then(({ latitude, longitude }) => {
+  //       setCurrentLocation({ latitude, longitude });
+  //       setCurrentLocationMarkerOnMap(latitude, longitude); // 지도 중심과 마커를 업데이트
+  //     })
+  //     .catch((error) => {
+  //       console.error("위치 정보를 가져오지 못했습니다.", error);
+  //     });
+  // };
 
   const handleGoToDetailPage = (areaInfo: AreaInfo) => {
     push(
@@ -453,24 +448,27 @@ export function KakaoMap() {
         />
       )}
       <div>
-        <Button
+        {/* <Button
           variant="iconButton"
           className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
             areaInfo ? "bottom-[240px] right-[18px]" : "bottom-[134px] right-[18px]"
           }`}
         >
           <Police />
-        </Button>
+        </Button> */}
         <Button
           variant="iconButton"
+          // className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
+          //   areaInfo ? "bottom-[185px] right-[18px]" : "bottom-[79px] right-[18px]"
+          // }`}
           className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
-            areaInfo ? "bottom-[185px] right-[18px]" : "bottom-[79px] right-[18px]"
+            areaInfo ? "bottom-[130px] right-[18px]" : "bottom-[24px] right-[18px]"
           }`}
           onClick={() => dialogOpen("reportConfirm")}
         >
           <Report />
         </Button>
-        <Button
+        {/* <Button
           variant="iconButton"
           className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
             areaInfo ? "bottom-[130px] right-[18px]" : "bottom-[24px] right-[18px]"
@@ -478,7 +476,7 @@ export function KakaoMap() {
           onClick={handleResetLocation}
         >
           <ResetLocation />
-        </Button>
+        </Button> */}
       </div>
       {areaInfo && (
         <div className="relative w-[98%] mx-auto">
