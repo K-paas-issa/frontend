@@ -22,7 +22,6 @@ export function KakaoMap() {
   const [map, setMap] = useState<any>(null);
   const [loading, setLoading] = useState(true); // 로딩 상태 관리
   let polygons: any[] = []; // polygon 정보 저장
-  let detailMode = false; // 지도의 줌 레벨 상태 확인
 
   // 사용자의 현재 위치
   // const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number } | null>(null);
@@ -160,6 +159,25 @@ export function KakaoMap() {
     }
   };
 
+  // allAreaList가 변경될 때마다 eachAreasRisk를 업데이트
+  useEffect(() => {
+    if (balloonList && balloonList?.length > 0 && allAreaList.length > 0) {
+      const newRiskMap = new Map<string, number>();
+
+      allAreaList.forEach((area) => {
+        newRiskMap.set(area.districtCode?.toString(), area.risk);
+      });
+
+      setEachAreasRisk(newRiskMap);
+    }
+  }, [balloonList, allAreaList]);
+
+  useEffect(() => {
+    if (map) {
+      window.kakao.maps.event.addListener(map, "click", onMapClick);
+    }
+  }, [map]);
+
   // 마커 생성
   const changeMarkerImage = (marker: any) => {
     if (selectedMarker) {
@@ -212,26 +230,27 @@ export function KakaoMap() {
           const path = coordinates.map(([lng, lat]: [number, number]) => new window.kakao.maps.LatLng(lat, lng));
           let bgColor = "#ffffff";
 
-          eachAreasRisk.forEach((value, key) => {
-            if (key === district_code.toString()) {
-              const riskValue = value;
+          eachAreasRisk.size > 0 &&
+            eachAreasRisk.forEach((value, key) => {
+              if (key === district_code.toString()) {
+                const riskValue = value;
 
-              if (riskValue !== undefined) {
-                if (riskValue >= 1 && riskValue < 25) {
-                  bgColor = "#BAE975";
-                }
-                if (riskValue >= 25 && riskValue < 50) {
-                  bgColor = "#FFD066";
-                }
-                if (riskValue >= 50 && riskValue < 75) {
-                  bgColor = "#FF9C00";
-                }
-                if (riskValue >= 75) {
-                  bgColor = "#FF3E2F";
+                if (riskValue !== undefined) {
+                  if (riskValue >= 1 && riskValue < 25) {
+                    bgColor = "#BAE975";
+                  }
+                  if (riskValue >= 25 && riskValue < 50) {
+                    bgColor = "#FFD066";
+                  }
+                  if (riskValue >= 50 && riskValue < 75) {
+                    bgColor = "#FF9C00";
+                  }
+                  if (riskValue >= 75) {
+                    bgColor = "#FF3E2F";
+                  }
                 }
               }
-            }
-          });
+            });
 
           const polygon = new window.kakao.maps.Polygon({
             map: map,
@@ -284,36 +303,11 @@ export function KakaoMap() {
   // };
 
   const settingJsonFileByZoomLevelAndCreateEachPolygons = useCallback(() => {
-    const level = map.getLevel();
-    if (!detailMode && level <= 10) {
-      detailMode = true;
-      removePolygons();
-      drawPolygonsBySelectedJsonFile(map, "data/sig.json");
-    } else if (detailMode && level > 10) {
-      detailMode = false;
+    if (map && allAreaList && eachAreasRisk) {
       removePolygons();
       drawPolygonsBySelectedJsonFile(map, "data/sig.json");
     }
-  }, [map]);
-
-  // allAreaList가 변경될 때마다 eachAreasRisk를 업데이트
-  useEffect(() => {
-    if (allAreaList.length > 0) {
-      const newRiskMap = new Map<string, number>();
-
-      allAreaList.forEach((area) => {
-        newRiskMap.set(area.districtCode?.toString(), area.risk);
-      });
-
-      setEachAreasRisk(newRiskMap);
-    }
-  }, [allAreaList]);
-
-  useEffect(() => {
-    if (map) {
-      window.kakao.maps.event.addListener(map, "click", onMapClick);
-    }
-  }, [map]);
+  }, [map, allAreaList, eachAreasRisk]);
 
   useEffect(() => {
     if (map && allAreaList.length > 0) {
@@ -336,11 +330,11 @@ export function KakaoMap() {
     //   settingJsonFileByZoomLevelAndCreateEachPolygons();
     //   window.kakao.maps.event.addListener(map, "zoom_changed", settingJsonFileByZoomLevelAndCreateEachPolygons);
     // }
-    if (map && balloonList) {
+    if (map && balloonList && eachAreasRisk.size > 0) {
       settingJsonFileByZoomLevelAndCreateEachPolygons();
       window.kakao.maps.event.addListener(map, "zoom_changed", settingJsonFileByZoomLevelAndCreateEachPolygons);
     }
-  }, [map, balloonList, settingJsonFileByZoomLevelAndCreateEachPolygons]);
+  }, [map, balloonList, eachAreasRisk, settingJsonFileByZoomLevelAndCreateEachPolygons]);
 
   // ResetLocation 버튼 클릭 시 내 위치로 이동
   // const handleResetLocation = () => {
