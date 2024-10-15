@@ -64,9 +64,7 @@ DialogTitle.displayName = DialogPrimitive.Title.displayName;
 const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Description ref={ref} className={cn("body1 text-gray_05", className)} {...props} />
-));
+>(({ className, ...props }, ref) => <div ref={ref} className={cn("body1 text-gray_05", className)} {...props} />);
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
 /** Control Button */
