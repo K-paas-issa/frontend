@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DetailPopup } from "./detailPopup";
 import { useRouter } from "next/navigation";
 import { Button, Police, Report, LoadingSpinner } from "../atom";
@@ -270,7 +270,20 @@ export function KakaoMap() {
   };
 
   // 지도 zoom level 에 따른 다른 json 파일 선택
-  const settingJsonFileByZoomLevelAndCreateEachPolygons = () => {
+  // const settingJsonFileByZoomLevelAndCreateEachPolygons = () => {
+  //   const level = map.getLevel();
+  //   if (!detailMode && level <= 10) {
+  //     detailMode = true;
+  //     removePolygons();
+  //     drawPolygonsBySelectedJsonFile(map, "data/sig.json");
+  //   } else if (detailMode && level > 10) {
+  //     detailMode = false;
+  //     removePolygons();
+  //     drawPolygonsBySelectedJsonFile(map, "data/sig.json");
+  //   }
+  // };
+
+  const settingJsonFileByZoomLevelAndCreateEachPolygons = useCallback(() => {
     const level = map.getLevel();
     if (!detailMode && level <= 10) {
       detailMode = true;
@@ -281,17 +294,19 @@ export function KakaoMap() {
       removePolygons();
       drawPolygonsBySelectedJsonFile(map, "data/sig.json");
     }
-  };
+  }, [map]);
 
   // allAreaList가 변경될 때마다 eachAreasRisk를 업데이트
   useEffect(() => {
-    const newRiskMap = new Map<string, number>();
+    if (allAreaList.length > 0) {
+      const newRiskMap = new Map<string, number>();
 
-    allAreaList.forEach((area) => {
-      newRiskMap.set(area.districtCode?.toString(), area.risk);
-    });
+      allAreaList.forEach((area) => {
+        newRiskMap.set(area.districtCode?.toString(), area.risk);
+      });
 
-    setEachAreasRisk(newRiskMap);
+      setEachAreasRisk(newRiskMap);
+    }
   }, [allAreaList]);
 
   useEffect(() => {
@@ -325,7 +340,7 @@ export function KakaoMap() {
       settingJsonFileByZoomLevelAndCreateEachPolygons();
       window.kakao.maps.event.addListener(map, "zoom_changed", settingJsonFileByZoomLevelAndCreateEachPolygons);
     }
-  }, [map, balloonList]);
+  }, [map, balloonList, settingJsonFileByZoomLevelAndCreateEachPolygons]);
 
   // ResetLocation 버튼 클릭 시 내 위치로 이동
   // const handleResetLocation = () => {
@@ -340,7 +355,7 @@ export function KakaoMap() {
   // };
 
   const handleGoToDetailPage = (areaInfo: AreaInfo) => {
-    push(`/${areaInfo.districtCode}?administrativeDistrict=${areaInfo.administrativeDistrict}&risk=${areaInfo.risk}`);
+    push(`/${areaInfo.id}?administrativeDistrict=${areaInfo.administrativeDistrict}&risk=${areaInfo.risk}`);
   };
 
   const handleReport = () => {
@@ -358,7 +373,7 @@ export function KakaoMap() {
           <LoadingSpinner />
           <div className="text-[24px] mt-[24px]">지도 로딩중...</div>
         </div>
-      )}{" "}
+      )}
       {/* 로딩 스피너 */}
       <div id="map" style={{ width: "100%", height: "100vh" }} />
       {isDialogOpen("reportConfirm") && (
