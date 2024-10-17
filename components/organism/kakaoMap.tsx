@@ -81,18 +81,6 @@ export function KakaoMap() {
         setLoading(false); // 로딩 완료
       }
     });
-    // window.kakao.maps.load(() => {
-    //   const mapContainer = document.getElementById("map");
-    //   if (mapContainer) {
-    //     const mapOption = {
-    //       center: new window.kakao.maps.LatLng(37.498095, 127.02761),
-    //       level: 7,
-    //     };
-    //     const map = new window.kakao.maps.Map(mapContainer, mapOption);
-    //     setMap(map);
-    //     setLoading(false);
-    //   }
-    // });
   };
 
   // 현재 위치 마커 생성 -> https 없어서 일단 제거
@@ -127,8 +115,6 @@ export function KakaoMap() {
         createMap(37.5665, 126.978); // 오류 시 기본 좌표 (서울)로 지도 생성
         setLoading(false);
       }
-      // await loadKakaoMapScript();
-      // createMap();
     };
 
     initializeMap(); // 초기화
@@ -140,186 +126,184 @@ export function KakaoMap() {
   const [areaInfo, setAreaInfo] = useState<AreaInfo | null>(null);
   let selectedMarker: any = null;
 
-  // const { balloonList } = useKakaomap();
+  const { balloonList } = useKakaomap();
 
   const defaultMarkerImage =
     map && new window.kakao.maps.MarkerImage("/assets/balloon.png", new window.kakao.maps.Size(45, 45));
   const selectedMarkerImage =
     map && new window.kakao.maps.MarkerImage("/assets/balloon.png", new window.kakao.maps.Size(55, 55));
 
-  // useEffect(() => {
-  //   if (balloonList) setAllAreaList(balloonList);
-  // }, [balloonList]);
-
   useEffect(() => {
-    setAllAreaList([
-      {
-        id: 1,
-        latitude: 37.5450159,
-        longitude: 127.1368066,
-        administrativeDistrict: "서울특별시 강동구 천호동",
-        districtCode: "11740",
-        risk: 80.8,
-        reportCount: 2,
-        status: "미처리",
-        startPredictionTime: "2024-10-10T18:46:55Z",
-      },
-      {
-        id: 2,
-        latitude: 37.488943,
-        longitude: 126.91005,
-        administrativeDistrict: "서울특별시 동작구 신대방동",
-        districtCode: "11590",
-        risk: 64.2,
-        reportCount: 0,
-        status: "미처리",
-        startPredictionTime: "2024-10-10T18:46:58Z",
-      },
-      {
-        id: 3,
-        latitude: 37.5556222,
-        longitude: 126.9055969,
-        administrativeDistrict: "서울특별시 마포구 망원동",
-        districtCode: "11440",
-        risk: 38.1,
-        reportCount: 0,
-        status: "처리",
-        startPredictionTime: "2024-10-10T18:47:00Z",
-      },
-      {
-        id: 4,
-        latitude: 37.6480275,
-        longitude: 127.0261145,
-        administrativeDistrict: "서울특별시 도봉구 쌍문동",
-        districtCode: "11320",
-        risk: 45.8,
-        reportCount: 0,
-        status: "미처리",
-        startPredictionTime: "2024-10-10T18:47:01Z",
-      },
-      {
-        id: 5,
-        latitude: 37.6250518,
-        longitude: 127.0197725,
-        administrativeDistrict: "서울특별시 강북구 삼양동",
-        districtCode: "11305",
-        risk: 65.5,
-        reportCount: 0,
-        status: "미처리",
-        startPredictionTime: "2024-10-10T18:47:01Z",
-      },
-      {
-        id: 6,
-        latitude: 37.5749343,
-        longitude: 127.0255251,
-        administrativeDistrict: "서울특별시 동대문구 신설동",
-        districtCode: "11230",
-        risk: 87.2,
-        reportCount: 0,
-        status: "미처리",
-        startPredictionTime: "2024-10-10T18:47:02Z",
-      },
-      {
-        id: 7,
-        latitude: 37.5643562,
-        longitude: 127.0152552,
-        administrativeDistrict: "서울특별시 중구 무학동",
-        districtCode: "11140",
-        risk: 41.2,
-        reportCount: 0,
-        status: "미처리",
-        startPredictionTime: "2024-10-10T18:47:03Z",
-      },
-      {
-        id: 8,
-        latitude: 37.5869186,
-        longitude: 127.0005764,
-        administrativeDistrict: "서울특별시 종로구 혜화동",
-        districtCode: "11110",
-        risk: 17.2,
-        reportCount: 0,
-        status: "미처리",
-        startPredictionTime: "2024-10-10T18:47:04Z",
-      },
-      {
-        id: 9,
-        latitude: 38.3316124,
-        longitude: 128.5225776,
-        administrativeDistrict: "강원도 고성군 죽왕면 오호리",
-        districtCode: "48820",
-        risk: 77.8,
-        reportCount: 0,
-        status: "미처리",
-        startPredictionTime: "2024-10-10T18:47:05Z",
-      },
-      {
-        id: 10,
-        latitude: 37.463776,
-        longitude: 126.676525,
-        administrativeDistrict: "인천광역시 미추홀구 주안동",
-        districtCode: "28177",
-        risk: 90.8,
-        reportCount: 0,
-        status: "미처리",
-        startPredictionTime: "2024-10-10T18:47:06Z",
-      },
-      {
-        id: 45,
-        latitude: 37.61095726715074,
-        longitude: 127.80433964283816,
-        administrativeDistrict: "신대리, 남면, 홍천군, 강원특별자치도, 25109, 대한민국",
-        districtCode: "51720",
-        risk: 172,
-        reportCount: 0,
-        status: "미처리",
-        startPredictionTime: "2024-10-14T02:35:22.016712Z",
-      },
-      {
-        id: 46,
-        latitude: 37.57465556376268,
-        longitude: 127.86694874198449,
-        administrativeDistrict: "25110, 유치리, 남면, 홍천군, 강원특별자치도, 대한민국",
-        districtCode: "51720",
-        risk: 46,
-        reportCount: 0,
-        status: "미처리",
-        startPredictionTime: "2024-10-14T02:35:22.016782Z",
-      },
-      {
-        id: 47,
-        latitude: 37.58817451083508,
-        longitude: 127.83607850324894,
-        administrativeDistrict: "시동로, 시동리, 남면, 홍천군, 강원특별자치도, 25109, 대한민국",
-        districtCode: "51720",
-        risk: 14,
-        reportCount: 0,
-        status: "미처리",
-        startPredictionTime: "2024-10-14T02:35:22.016820Z",
-      },
-      {
-        id: 48,
-        latitude: 38.218516906274104,
-        longitude: 127.38762747515159,
-        administrativeDistrict: "청양리, 철원군, 강원특별자치도, 24055, 대한민국",
-        districtCode: "51780",
-        risk: 143,
-        reportCount: 0,
-        status: "미처리",
-        startPredictionTime: "2024-10-14T03:00:55.951501Z",
-      },
-      {
-        id: 49,
-        latitude: 38.221249250410786,
-        longitude: 127.40517945786198,
-        administrativeDistrict: "24055, 청양리, 철원군, 강원특별자치도, 대한민국",
-        districtCode: "51780",
-        risk: 68,
-        reportCount: 0,
-        status: "미처리",
-        startPredictionTime: "2024-10-14T03:00:55.951572Z",
-      },
-    ]);
-  }, []);
+    if (balloonList) setAllAreaList(balloonList);
+  }, [balloonList]);
+  //   setAllAreaList([
+  //     {
+  //       id: 1,
+  //       latitude: 37.5450159,
+  //       longitude: 127.1368066,
+  //       administrativeDistrict: "서울특별시 강동구 천호동",
+  //       districtCode: "11740",
+  //       risk: 80.8,
+  //       reportCount: 2,
+  //       status: "미처리",
+  //       startPredictionTime: "2024-10-10T18:46:55Z",
+  //     },
+  //     {
+  //       id: 2,
+  //       latitude: 37.488943,
+  //       longitude: 126.91005,
+  //       administrativeDistrict: "서울특별시 동작구 신대방동",
+  //       districtCode: "11590",
+  //       risk: 64.2,
+  //       reportCount: 0,
+  //       status: "미처리",
+  //       startPredictionTime: "2024-10-10T18:46:58Z",
+  //     },
+  //     {
+  //       id: 3,
+  //       latitude: 37.5556222,
+  //       longitude: 126.9055969,
+  //       administrativeDistrict: "서울특별시 마포구 망원동",
+  //       districtCode: "11440",
+  //       risk: 38.1,
+  //       reportCount: 0,
+  //       status: "처리",
+  //       startPredictionTime: "2024-10-10T18:47:00Z",
+  //     },
+  //     {
+  //       id: 4,
+  //       latitude: 37.6480275,
+  //       longitude: 127.0261145,
+  //       administrativeDistrict: "서울특별시 도봉구 쌍문동",
+  //       districtCode: "11320",
+  //       risk: 45.8,
+  //       reportCount: 0,
+  //       status: "미처리",
+  //       startPredictionTime: "2024-10-10T18:47:01Z",
+  //     },
+  //     {
+  //       id: 5,
+  //       latitude: 37.6250518,
+  //       longitude: 127.0197725,
+  //       administrativeDistrict: "서울특별시 강북구 삼양동",
+  //       districtCode: "11305",
+  //       risk: 65.5,
+  //       reportCount: 0,
+  //       status: "미처리",
+  //       startPredictionTime: "2024-10-10T18:47:01Z",
+  //     },
+  //     {
+  //       id: 6,
+  //       latitude: 37.5749343,
+  //       longitude: 127.0255251,
+  //       administrativeDistrict: "서울특별시 동대문구 신설동",
+  //       districtCode: "11230",
+  //       risk: 87.2,
+  //       reportCount: 0,
+  //       status: "미처리",
+  //       startPredictionTime: "2024-10-10T18:47:02Z",
+  //     },
+  //     {
+  //       id: 7,
+  //       latitude: 37.5643562,
+  //       longitude: 127.0152552,
+  //       administrativeDistrict: "서울특별시 중구 무학동",
+  //       districtCode: "11140",
+  //       risk: 41.2,
+  //       reportCount: 0,
+  //       status: "미처리",
+  //       startPredictionTime: "2024-10-10T18:47:03Z",
+  //     },
+  //     {
+  //       id: 8,
+  //       latitude: 37.5869186,
+  //       longitude: 127.0005764,
+  //       administrativeDistrict: "서울특별시 종로구 혜화동",
+  //       districtCode: "11110",
+  //       risk: 17.2,
+  //       reportCount: 0,
+  //       status: "미처리",
+  //       startPredictionTime: "2024-10-10T18:47:04Z",
+  //     },
+  //     {
+  //       id: 9,
+  //       latitude: 38.3316124,
+  //       longitude: 128.5225776,
+  //       administrativeDistrict: "강원도 고성군 죽왕면 오호리",
+  //       districtCode: "48820",
+  //       risk: 77.8,
+  //       reportCount: 0,
+  //       status: "미처리",
+  //       startPredictionTime: "2024-10-10T18:47:05Z",
+  //     },
+  //     {
+  //       id: 10,
+  //       latitude: 37.463776,
+  //       longitude: 126.676525,
+  //       administrativeDistrict: "인천광역시 미추홀구 주안동",
+  //       districtCode: "28177",
+  //       risk: 90.8,
+  //       reportCount: 0,
+  //       status: "미처리",
+  //       startPredictionTime: "2024-10-10T18:47:06Z",
+  //     },
+  //     {
+  //       id: 45,
+  //       latitude: 37.61095726715074,
+  //       longitude: 127.80433964283816,
+  //       administrativeDistrict: "신대리, 남면, 홍천군, 강원특별자치도, 25109, 대한민국",
+  //       districtCode: "51720",
+  //       risk: 172,
+  //       reportCount: 0,
+  //       status: "미처리",
+  //       startPredictionTime: "2024-10-14T02:35:22.016712Z",
+  //     },
+  //     {
+  //       id: 46,
+  //       latitude: 37.57465556376268,
+  //       longitude: 127.86694874198449,
+  //       administrativeDistrict: "25110, 유치리, 남면, 홍천군, 강원특별자치도, 대한민국",
+  //       districtCode: "51720",
+  //       risk: 46,
+  //       reportCount: 0,
+  //       status: "미처리",
+  //       startPredictionTime: "2024-10-14T02:35:22.016782Z",
+  //     },
+  //     {
+  //       id: 47,
+  //       latitude: 37.58817451083508,
+  //       longitude: 127.83607850324894,
+  //       administrativeDistrict: "시동로, 시동리, 남면, 홍천군, 강원특별자치도, 25109, 대한민국",
+  //       districtCode: "51720",
+  //       risk: 14,
+  //       reportCount: 0,
+  //       status: "미처리",
+  //       startPredictionTime: "2024-10-14T02:35:22.016820Z",
+  //     },
+  //     {
+  //       id: 48,
+  //       latitude: 38.218516906274104,
+  //       longitude: 127.38762747515159,
+  //       administrativeDistrict: "청양리, 철원군, 강원특별자치도, 24055, 대한민국",
+  //       districtCode: "51780",
+  //       risk: 143,
+  //       reportCount: 0,
+  //       status: "미처리",
+  //       startPredictionTime: "2024-10-14T03:00:55.951501Z",
+  //     },
+  //     {
+  //       id: 49,
+  //       latitude: 38.221249250410786,
+  //       longitude: 127.40517945786198,
+  //       administrativeDistrict: "24055, 청양리, 철원군, 강원특별자치도, 대한민국",
+  //       districtCode: "51780",
+  //       risk: 68,
+  //       reportCount: 0,
+  //       status: "미처리",
+  //       startPredictionTime: "2024-10-14T03:00:55.951572Z",
+  //     },
+  //   ]);
+  // }, []);
 
   const onMapClick = () => {
     if (selectedMarker) {
@@ -330,20 +314,8 @@ export function KakaoMap() {
   };
 
   // allAreaList가 변경될 때마다 eachAreasRisk를 업데이트
-  // useEffect(() => {
-  //   if (balloonList && balloonList?.length > 0 && allAreaList.length > 0) {
-  //     const newRiskMap = new Map<string, number>();
-
-  //     allAreaList.forEach((area) => {
-  //       newRiskMap.set(area.districtCode?.toString(), area.risk);
-  //     });
-
-  //     setEachAreasRisk(newRiskMap);
-  //   }
-  // }, [balloonList, allAreaList]);
-
   useEffect(() => {
-    if (allAreaList.length > 0) {
+    if (balloonList && balloonList?.length > 0 && allAreaList.length > 0) {
       const newRiskMap = new Map<string, number>();
 
       allAreaList.forEach((area) => {
@@ -352,7 +324,7 @@ export function KakaoMap() {
 
       setEachAreasRisk(newRiskMap);
     }
-  }, [allAreaList]);
+  }, [balloonList, allAreaList]);
 
   useEffect(() => {
     if (map) {
@@ -377,19 +349,6 @@ export function KakaoMap() {
       position: new window.kakao.maps.LatLng(info.latitude, info.longitude),
       image: defaultMarkerImage,
     });
-
-    // const overlayContent =
-    //   '<div style="font-size: 16px; font-weight: 700; position: relative; color: #FFFFFF; top: -20px; left: 2px; pointer-events: none;">' +
-    //   info.reportCount +
-    //   "</div>";
-
-    // const overlay = new window.kakao.maps.CustomOverlay({
-    //   content: overlayContent,
-    //   map: map,
-    //   position: marker.getPosition(),
-    // });
-
-    // overlay.setMap(map);
 
     window.kakao.maps.event.addListener(marker, "click", function () {
       changeMarkerImage(marker);
@@ -493,29 +452,13 @@ export function KakaoMap() {
     }
   }, [map, allAreaList]);
 
-  // useEffect(() => {
-  //   if (map && currentLocation && balloonList && eachAreasRisk.size > 0) {
-  //     setCurrentLocationMarkerOnMap(currentLocation.latitude, currentLocation.longitude); // 마커 생성
-  //     settingJsonFileByZoomLevelAndCreateEachPolygons();
-  //     window.kakao.maps.event.addListener(map, "zoom_changed", settingJsonFileByZoomLevelAndCreateEachPolygons);
-  //   }
-  //   // if (map && balloonList && eachAreasRisk.size > 0) {
-  //   //   settingJsonFileByZoomLevelAndCreateEachPolygons();
-  //   //   window.kakao.maps.event.addListener(map, "zoom_changed", settingJsonFileByZoomLevelAndCreateEachPolygons);
-  //   // }
-  // }, [map, balloonList, eachAreasRisk, settingJsonFileByZoomLevelAndCreateEachPolygons]);
-
   useEffect(() => {
-    if (map && currentLocation && eachAreasRisk.size > 0) {
+    if (map && currentLocation && balloonList && eachAreasRisk.size > 0) {
       setCurrentLocationMarkerOnMap(currentLocation.latitude, currentLocation.longitude); // 마커 생성
       settingJsonFileByZoomLevelAndCreateEachPolygons();
       window.kakao.maps.event.addListener(map, "zoom_changed", settingJsonFileByZoomLevelAndCreateEachPolygons);
     }
-    // if (map && balloonList && eachAreasRisk.size > 0) {
-    //   settingJsonFileByZoomLevelAndCreateEachPolygons();
-    //   window.kakao.maps.event.addListener(map, "zoom_changed", settingJsonFileByZoomLevelAndCreateEachPolygons);
-    // }
-  }, [map, eachAreasRisk, settingJsonFileByZoomLevelAndCreateEachPolygons]);
+  }, [map, balloonList, eachAreasRisk, settingJsonFileByZoomLevelAndCreateEachPolygons]);
 
   // ResetLocation 버튼 클릭 시 내 위치로 이동
   const handleResetLocation = () => {
