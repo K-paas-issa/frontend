@@ -7,10 +7,6 @@ const useKakaomap = () => {
   const { dialogOpen } = useDialogContext();
 
   useEffect(() => {
-    if (isBalloonListError) console.log(isBalloonListError.message);
-  }, [isBalloonListError]);
-
-  useEffect(() => {
     if (isBalloonListError) {
       dialogOpen(`isBalloonError`);
     }
