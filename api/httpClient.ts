@@ -1,10 +1,11 @@
 import { createApiErrorMessage } from "./httpError";
 import axios, { AxiosResponse } from "axios";
 
-const developmentApiUrl = process.env["NEXT_PUBLIC_SERVER_IP"];
+const developmentApiUrl = process.env["NEXT_PUBLIC_SERVER_IP_DEVELOPMENT"] ?? "https://dev.lio.team/api";
+const productionApiUrl = process.env["NEXT_PUBLIC_SERVER_IP_PRODUCTION"] ?? "https://api.lio.team/api";
 
 const client = axios.create({
-  baseURL: developmentApiUrl,
+  baseURL: process.env["NEXT_PUBLIC_MODE"] === "development" ? developmentApiUrl : productionApiUrl,
 });
 
 async function httpClient<T>(...args: Parameters<typeof client.request>) {
