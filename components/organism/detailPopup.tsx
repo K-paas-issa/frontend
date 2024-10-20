@@ -40,13 +40,7 @@ export const DetailPopup = ({ info, onClick }: { info: BalloonInfo | null; onCli
               {info.administrativeDistrict}
             </div>
           </div>
-          <div className="flex items-end">
-            <div className="flex items-center gap-[4px] mr-[8px]">
-              <Report color="red" />
-              <div className="pt-[8px]">{info.reportCount}</div>
-            </div>
-            <div> / 위험도 {info.risk}%</div>
-          </div>
+          <div className="mt-[6px] body2 text-gray_05">위험도 {info.risk}%</div>
         </div>
         <div>
           <ArrowRight />
