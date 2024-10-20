@@ -7,7 +7,7 @@ import { Button, Police, Report, LoadingSpinner, ResetLocation } from "../atom";
 import { SimpleAlarmDialog } from "./simpleAlarmDialog";
 import { useDialogContext } from "@/lib";
 import { useKakaomap } from "./useKakaomap";
-import { AreaInfo } from "@/api";
+import { BalloonInfo, ReportInfo } from "@/api";
 
 declare global {
   interface Window {
@@ -122,11 +122,15 @@ export function KakaoMap() {
 
   // 키가 string이고 값이 number인 Map 객체 선언
   const [eachAreasRisk, setEachAreasRisk] = useState<Map<string, number>>(new Map());
-  const [allAreaList, setAllAreaList] = useState<AreaInfo[]>([]);
-  const [areaInfo, setAreaInfo] = useState<AreaInfo | null>(null);
+  const [allBalloon, setAllBalloon] = useState<BalloonInfo[]>([]);
+  const [balloonInfo, setBalloonInfo] = useState<BalloonInfo | null>(null);
+  const [allReport, setAllReport] = useState<ReportInfo[]>([]);
   let selectedMarker: any = null;
 
   const { balloonList } = useKakaomap();
+
+  const defaultReportMarkerImage =
+    map && new window.kakao.maps.MarkerImage("/assets/default_marker.png", new window.kakao.maps.Size(55, 60));
 
   const defaultMarkerImage =
     map && new window.kakao.maps.MarkerImage("/assets/balloon.png", new window.kakao.maps.Size(45, 45));
@@ -134,29 +138,46 @@ export function KakaoMap() {
     map && new window.kakao.maps.MarkerImage("/assets/balloon.png", new window.kakao.maps.Size(55, 55));
 
   useEffect(() => {
-    if (balloonList) setAllAreaList(balloonList);
+    if (balloonList) setAllBalloon(balloonList);
   }, [balloonList]);
+
+  useEffect(() => {
+    setAllReport([
+      {
+        id: 1,
+        latitude: 37.498095,
+        longitude: 127.02761,
+        reportCount: 10,
+      },
+      {
+        id: 2,
+        latitude: 37.69733335,
+        longitude: 126.7978504,
+        reportCount: 1,
+      },
+    ]);
+  }, []);
 
   const onMapClick = () => {
     if (selectedMarker) {
       selectedMarker.setImage(defaultMarkerImage);
       selectedMarker = null;
-      setAreaInfo(null);
+      setBalloonInfo(null);
     }
   };
 
-  // allAreaList가 변경될 때마다 eachAreasRisk를 업데이트
+  // allBalloon가 변경될 때마다 eachAreasRisk를 업데이트
   useEffect(() => {
-    if (balloonList && balloonList?.length >= 0 && allAreaList.length >= 0) {
+    if (balloonList && balloonList?.length >= 0 && allBalloon.length >= 0) {
       const newRiskMap = new Map<string, number>();
 
-      allAreaList.forEach((area) => {
+      allBalloon.forEach((area) => {
         newRiskMap.set(area.districtCode?.toString(), area.risk);
       });
 
       setEachAreasRisk(newRiskMap);
     }
-  }, [balloonList, allAreaList]);
+  }, [balloonList, allBalloon]);
 
   useEffect(() => {
     if (map) {
@@ -174,7 +195,7 @@ export function KakaoMap() {
     selectedMarker = marker;
   };
 
-  const createMarker = (info: AreaInfo) => {
+  const createBalloonMarker = (info: BalloonInfo) => {
     let marker = new window.kakao.maps.Marker({
       id: info.id,
       map: map,
@@ -184,8 +205,32 @@ export function KakaoMap() {
 
     window.kakao.maps.event.addListener(marker, "click", function () {
       changeMarkerImage(marker);
-      setAreaInfo(info);
+      setBalloonInfo(info);
     });
+
+    return marker;
+  };
+
+  const createReportMarker = (info: ReportInfo) => {
+    let marker = new window.kakao.maps.Marker({
+      id: info.id,
+      map: map,
+      position: new window.kakao.maps.LatLng(info.latitude, info.longitude),
+      image: defaultReportMarkerImage,
+    });
+
+    const overlayContent =
+      '<div style="font-size: 16px; font-weight: 700; position: relative; color: #FFFFFF; top: -30px; left: 1px; pointer-events: none;">' +
+      info.reportCount +
+      "</div>";
+
+    const overlay = new window.kakao.maps.CustomOverlay({
+      content: overlayContent,
+      map: map,
+      position: marker.getPosition(),
+    });
+
+    overlay.setMap(map);
 
     return marker;
   };
@@ -263,26 +308,41 @@ export function KakaoMap() {
 
   // 지도 zoom level 에 따른 다른 json 파일 선택
   const settingJsonFileByZoomLevelAndCreateEachPolygons = useCallback(() => {
-    if (map && allAreaList && eachAreasRisk) {
+    if (map && allBalloon && eachAreasRisk) {
       removePolygons();
       drawPolygonsBySelectedJsonFile(map, "data/sig.json");
     }
-  }, [map, allAreaList, eachAreasRisk]);
+  }, [map, allBalloon, eachAreasRisk]);
 
   useEffect(() => {
-    if (map && allAreaList.length >= 0) {
-      const areas = allAreaList;
+    if (map && allBalloon.length >= 0) {
+      const areas = allBalloon;
       if (areas) {
         if (areas.length === 1) {
-          createMarker(areas[0]);
+          createBalloonMarker(areas[0]);
         } else {
           areas.map((area) => {
-            createMarker(area);
+            createBalloonMarker(area);
           });
         }
       }
     }
-  }, [map, allAreaList]);
+  }, [map, allBalloon]);
+
+  useEffect(() => {
+    if (map && allReport.length >= 0) {
+      const reports = allReport;
+      if (reports) {
+        if (reports.length === 1) {
+          createReportMarker(reports[0]);
+        } else {
+          reports.map((report) => {
+            createReportMarker(report);
+          });
+        }
+      }
+    }
+  }, [map, allReport]);
 
   useEffect(() => {
     if (map && currentLocation && balloonList && eachAreasRisk.size >= 0) {
@@ -304,8 +364,8 @@ export function KakaoMap() {
       });
   };
 
-  const handleGoToDetailPage = (areaInfo: AreaInfo) => {
-    push(`/${areaInfo.id}?administrativeDistrict=${areaInfo.administrativeDistrict}&risk=${areaInfo.risk}`);
+  const handleGoToDetailPage = (balloonInfo: BalloonInfo) => {
+    push(`/${balloonInfo.id}?administrativeDistrict=${balloonInfo.administrativeDistrict}&risk=${balloonInfo.risk}`);
   };
 
   const handleReport = () => {
@@ -379,7 +439,7 @@ export function KakaoMap() {
         <Button
           variant="iconButton"
           className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
-            areaInfo ? "bottom-[240px] right-[18px]" : "bottom-[134px] right-[18px]"
+            balloonInfo ? "bottom-[240px] right-[18px]" : "bottom-[134px] right-[18px]"
           }`}
         >
           <Police />
@@ -387,7 +447,7 @@ export function KakaoMap() {
         <Button
           variant="iconButton"
           className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
-            areaInfo ? "bottom-[185px] right-[18px]" : "bottom-[79px] right-[18px]"
+            balloonInfo ? "bottom-[185px] right-[18px]" : "bottom-[79px] right-[18px]"
           }`}
           onClick={() => dialogOpen("reportConfirm")}
         >
@@ -396,16 +456,16 @@ export function KakaoMap() {
         <Button
           variant="iconButton"
           className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
-            areaInfo ? "bottom-[130px] right-[18px]" : "bottom-[24px] right-[18px]"
+            balloonInfo ? "bottom-[130px] right-[18px]" : "bottom-[24px] right-[18px]"
           }`}
           onClick={handleResetLocation}
         >
           <ResetLocation />
         </Button>
       </div>
-      {areaInfo && (
+      {balloonInfo && (
         <div className="relative w-[98%] mx-auto">
-          <DetailPopup info={areaInfo} onClick={() => handleGoToDetailPage(areaInfo)} />
+          <DetailPopup info={balloonInfo} onClick={() => handleGoToDetailPage(balloonInfo)} />
         </div>
       )}
     </div>
