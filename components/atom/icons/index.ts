@@ -6,3 +6,4 @@ export { Send } from "./send";
 export { Trash } from "./trash";
 export { ArrowRight } from "./arrowRight";
 export { ResetLocation } from "./resetLocation";
+export { Note } from "./note";
