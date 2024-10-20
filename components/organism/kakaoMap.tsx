@@ -8,6 +8,7 @@ import { SimpleAlarmDialog } from "./simpleAlarmDialog";
 import { useDialogContext } from "@/lib";
 import { useKakaomap } from "./useKakaomap";
 import { BalloonInfo, ReportInfo } from "@/api";
+import { ReportDialog } from "./reportDialog";
 
 declare global {
   interface Window {
@@ -376,6 +377,39 @@ export function KakaoMap() {
     }, 100);
   };
 
+  const [selectedImage, setSelectedImage] = useState<string | ArrayBuffer | null>(null);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const extension = file.name.split(".").pop()?.toLowerCase();
+    if (extension !== "jpg" && extension !== "jpeg" && extension !== "png") {
+      alert("jpg, jpeg, png 파일만 업로드해주세요.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setSelectedImage(reader.result);
+    };
+
+    if (e.target.files) {
+      const formData = new FormData();
+      formData.append("image", e.target.files[0]);
+      // uploadProductImage({
+      //   file: formData,
+      // });
+      e.target.value = "";
+    }
+
+    reader.readAsDataURL(file);
+  };
+
+  const handleImageRemove = () => {
+    setSelectedImage(null);
+  };
+
   return (
     <div className="w-full relative">
       {loading && (
@@ -384,23 +418,15 @@ export function KakaoMap() {
           <div className="text-[24px] mt-[24px]">지도 로딩중...</div>
         </div>
       )}
-      {/* 로딩 스피너 */}
       <div id="map" style={{ width: "100%", height: "100vh" }} />
       {isDialogOpen("reportConfirm") && (
-        <SimpleAlarmDialog
+        <ReportDialog
           id="reportConfirm"
-          title="신고하기"
-          message={<div className="body2">현재 위치에 대한 신고를 진행하시겠습니까?</div>}
-          options={
-            <div className="w-full flex flex-col gap-[8px]">
-              <Button variant="sky" className="w-full" onClick={handleReport}>
-                접수하기
-              </Button>
-              <Button variant="text" className="w-full">
-                취소
-              </Button>
-            </div>
-          }
+          onReport={handleReport}
+          selectedImage={selectedImage}
+          onImageUpload={handleImageUpload}
+          onImageRemove={handleImageRemove}
+          //error={false}
         />
       )}
       {isDialogOpen("reportResult") && (
@@ -435,8 +461,9 @@ export function KakaoMap() {
           }
         />
       )}
-      <div>
-        {/* <Button
+      {!loading && (
+        <div>
+          {/* <Button
           variant="iconButton"
           className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
             balloonInfo ? "bottom-[240px] right-[18px]" : "bottom-[134px] right-[18px]"
@@ -444,25 +471,26 @@ export function KakaoMap() {
         >
           <Police />
         </Button> */}
-        <Button
-          variant="iconButton"
-          className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
-            balloonInfo ? "bottom-[185px] right-[18px]" : "bottom-[79px] right-[18px]"
-          }`}
-          onClick={() => dialogOpen("reportConfirm")}
-        >
-          <Report color="red" />
-        </Button>
-        <Button
-          variant="iconButton"
-          className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
-            balloonInfo ? "bottom-[130px] right-[18px]" : "bottom-[24px] right-[18px]"
-          }`}
-          onClick={handleResetLocation}
-        >
-          <ResetLocation />
-        </Button>
-      </div>
+          <Button
+            variant="iconButton"
+            className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
+              balloonInfo ? "bottom-[185px] right-[18px]" : "bottom-[79px] right-[18px]"
+            }`}
+            onClick={() => dialogOpen("reportConfirm")}
+          >
+            <Report color="red" />
+          </Button>
+          <Button
+            variant="iconButton"
+            className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
+              balloonInfo ? "bottom-[130px] right-[18px]" : "bottom-[24px] right-[18px]"
+            }`}
+            onClick={handleResetLocation}
+          >
+            <ResetLocation />
+          </Button>
+        </div>
+      )}
       {balloonInfo && (
         <div className="relative w-[98%] mx-auto">
           <DetailPopup info={balloonInfo} onClick={() => handleGoToDetailPage(balloonInfo)} />

@@ -1,4 +1,3 @@
-export { ImageBox } from "./imageBox";
 export { Tooltip } from "./tooltip";
 export {
   Dialog,
@@ -12,3 +11,4 @@ export {
   DialogTitle,
   DialogDescription,
 } from "./dialog";
+export { ImageUploadBox } from "./imageUploadBox";
