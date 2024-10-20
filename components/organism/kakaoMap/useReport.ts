@@ -39,10 +39,10 @@ const useReport = () => {
   };
 
   const handleReport = () => {
-    dialogClose(`reportConfirm`);
+    dialogClose(`report`);
 
     setTimeout(() => {
-      dialogOpen(`reportResult`);
+      dialogOpen(`reportSuccess`);
     }, 100);
   };
 

@@ -7,11 +7,12 @@ import { Button, Report, LoadingSpinner, ResetLocation, Note } from "../../atom"
 import { SimpleAlarmDialog } from "../simpleAlarmDialog";
 import { useDialogContext } from "@/lib";
 import { useKakaomap } from "./useKakaomap";
-import { BalloonInfo, ReportInfo } from "@/api";
+import { BalloonInfo } from "@/api";
 import { ReportDialog } from "../reportDialog";
 import { useMyLocation } from "./useMyLocation";
 import { useCreatePolygon } from "./useCreatePolygon";
 import { useReport } from "./useReport";
+import { ReportHistoryDialog } from "../reportHistoryDialog";
 
 declare global {
   interface Window {
@@ -56,7 +57,7 @@ export function KakaoMap() {
       }
     };
 
-    initializeMap(); // 초기화
+    initializeMap();
   }, []);
 
   // 행정구역별 위험도 색상 칠하기 위한 사전 작업
@@ -126,18 +127,19 @@ export function KakaoMap() {
         </div>
       )}
       <div id="map" style={{ width: "100%", height: "100vh" }} />
-      {isDialogOpen("reportConfirm") && (
+      {isDialogOpen("reportHistory") && <ReportHistoryDialog id="reportHistory" />}
+      {isDialogOpen("report") && (
         <ReportDialog
-          id="reportConfirm"
+          id="report"
           onReport={handleReport}
           selectedImage={selectedImage}
           onImageUpload={handleImageUpload}
           onImageRemove={handleImageRemove}
         />
       )}
-      {isDialogOpen("reportResult") && (
+      {isDialogOpen("reportSuccess") && (
         <SimpleAlarmDialog
-          id="reportResult"
+          id="reportSuccess"
           title="알림"
           message={
             <div className="body2 space-y-[2px]">
@@ -174,6 +176,7 @@ export function KakaoMap() {
             className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
               balloonInfo ? "bottom-[240px] right-[18px]" : "bottom-[134px] right-[18px]"
             }`}
+            onClick={() => dialogOpen("reportHistory")}
           >
             <Note />
           </Button>
@@ -182,7 +185,7 @@ export function KakaoMap() {
             className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
               balloonInfo ? "bottom-[185px] right-[18px]" : "bottom-[79px] right-[18px]"
             }`}
-            onClick={() => dialogOpen("reportConfirm")}
+            onClick={() => dialogOpen("report")}
           >
             <Report color="red" />
           </Button>
