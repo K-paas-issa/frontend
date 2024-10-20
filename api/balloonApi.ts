@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { httpClient } from "./httpClient";
 
-export interface AreaInfo {
+export interface BalloonInfo {
   id: number;
   latitude: number;
   longitude: number;
@@ -17,7 +17,7 @@ export function useBalloonApi() {
   return useQuery({
     queryKey: ["getBalloonList"],
     queryFn: () =>
-      httpClient<AreaInfo[]>({
+      httpClient<BalloonInfo[]>({
         method: "GET",
         url: `/balloons`,
       }),
