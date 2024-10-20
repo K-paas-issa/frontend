@@ -147,7 +147,7 @@ export function KakaoMap() {
 
   // allAreaList가 변경될 때마다 eachAreasRisk를 업데이트
   useEffect(() => {
-    if (balloonList && balloonList?.length > 0 && allAreaList.length > 0) {
+    if (balloonList && balloonList?.length >= 0 && allAreaList.length >= 0) {
       const newRiskMap = new Map<string, number>();
 
       allAreaList.forEach((area) => {
@@ -203,7 +203,7 @@ export function KakaoMap() {
           const path = coordinates.map(([lng, lat]: [number, number]) => new window.kakao.maps.LatLng(lat, lng));
           let bgColor = "#ffffff";
 
-          eachAreasRisk.size > 0 &&
+          eachAreasRisk.size >= 0 &&
             eachAreasRisk.forEach((value, key) => {
               if (key === district_code.toString()) {
                 const riskValue = value;
@@ -270,7 +270,7 @@ export function KakaoMap() {
   }, [map, allAreaList, eachAreasRisk]);
 
   useEffect(() => {
-    if (map && allAreaList.length > 0) {
+    if (map && allAreaList.length >= 0) {
       const areas = allAreaList;
       if (areas) {
         if (areas.length === 1) {
@@ -285,7 +285,7 @@ export function KakaoMap() {
   }, [map, allAreaList]);
 
   useEffect(() => {
-    if (map && currentLocation && balloonList && eachAreasRisk.size > 0) {
+    if (map && currentLocation && balloonList && eachAreasRisk.size >= 0) {
       setCurrentLocationMarkerOnMap(currentLocation.latitude, currentLocation.longitude); // 마커 생성
       settingJsonFileByZoomLevelAndCreateEachPolygons();
       window.kakao.maps.event.addListener(map, "zoom_changed", settingJsonFileByZoomLevelAndCreateEachPolygons);
