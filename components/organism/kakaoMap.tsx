@@ -436,14 +436,14 @@ export function KakaoMap() {
         />
       )}
       <div>
-        <Button
+        {/* <Button
           variant="iconButton"
           className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
             balloonInfo ? "bottom-[240px] right-[18px]" : "bottom-[134px] right-[18px]"
           }`}
         >
           <Police />
-        </Button>
+        </Button> */}
         <Button
           variant="iconButton"
           className={`flex items-center justify-between p-[10px] w-[48px] z-10 absolute bg-white ${
@@ -451,7 +451,7 @@ export function KakaoMap() {
           }`}
           onClick={() => dialogOpen("reportConfirm")}
         >
-          <Report />
+          <Report color="red" />
         </Button>
         <Button
           variant="iconButton"
