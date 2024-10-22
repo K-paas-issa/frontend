@@ -4,3 +4,11 @@ export interface ReportInfo {
   longitude: number;
   reportCount: number;
 }
+
+export interface ReportHistory {
+  id: number;
+  createdAt: string;
+  reportLocation: string;
+  status: string;
+  message: string;
+}

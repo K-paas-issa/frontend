@@ -7,7 +7,7 @@ import { Button, Report, LoadingSpinner, ResetLocation, Note } from "../../atom"
 import { SimpleAlarmDialog } from "../simpleAlarmDialog";
 import { useDialogContext } from "@/lib";
 import { useKakaomap } from "./useKakaomap";
-import { BalloonInfo } from "@/api";
+import { BalloonInfo, ReportHistory } from "@/api";
 import { ReportDialog } from "../reportDialog";
 import { useMyLocation } from "./useMyLocation";
 import { useCreatePolygon } from "./useCreatePolygon";
@@ -118,6 +118,23 @@ export function KakaoMap() {
     push(`/${balloonInfo.id}?administrativeDistrict=${balloonInfo.administrativeDistrict}&risk=${balloonInfo.risk}`);
   };
 
+  const reportHistory: ReportHistory[] = [
+    {
+      id: 1,
+      createdAt: "2024.01.01",
+      reportLocation: "서울시 동작구 등용로",
+      status: "접수 실패",
+      message: "부적합한 오물풍선 이미지",
+    },
+    {
+      id: 2,
+      createdAt: "2024.01.01",
+      reportLocation: "서울시 동작구 등용로",
+      status: "접수 완료",
+      message: "",
+    },
+  ];
+
   return (
     <div className="w-full relative">
       {loading && (
@@ -127,7 +144,7 @@ export function KakaoMap() {
         </div>
       )}
       <div id="map" style={{ width: "100%", height: "100vh" }} />
-      {isDialogOpen("reportHistory") && <ReportHistoryDialog id="reportHistory" />}
+      {isDialogOpen("reportHistory") && <ReportHistoryDialog id="reportHistory" reportHistory={reportHistory} />}
       {isDialogOpen("report") && (
         <ReportDialog
           id="report"
