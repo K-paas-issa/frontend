@@ -2,9 +2,9 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { httpClient } from "./httpClient";
 
 export interface ReportInfo {
-  id: number;
-  latitude: number;
-  longitude: number;
+  centerLatitude: number;
+  centerLongitude: number;
+  streetAddress: string;
   reportCount: number;
 }
 
@@ -56,5 +56,16 @@ export function useReportHistoryApi() {
         url: `/balloons/report/status?codes=${codes}`,
       });
     },
+  });
+}
+
+export function useReportCountApi() {
+  return useQuery({
+    queryKey: ["getReportCountList"],
+    queryFn: () =>
+      httpClient<ReportInfo[]>({
+        method: "GET",
+        url: `/balloons/report`,
+      }),
   });
 }

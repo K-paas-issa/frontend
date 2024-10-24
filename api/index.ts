@@ -1,6 +1,6 @@
 export { useBalloonApi } from "./balloonApi";
 export { useCommentApi, useCreateCommentApi } from "./commentApi";
-export { useReportApi } from "./reportApi";
+export { useReportApi, useReportHistoryApi, useReportCountApi } from "./reportApi";
 
 export type { BalloonInfo } from "./balloonApi";
 export type { Comment } from "./commentApi";

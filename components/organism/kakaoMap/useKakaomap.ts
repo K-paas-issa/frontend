@@ -78,9 +78,8 @@ const useKakaomap = () => {
 
   const createReportMarker = (info: ReportInfo) => {
     let marker = new window.kakao.maps.Marker({
-      id: info.id,
       map: map,
-      position: new window.kakao.maps.LatLng(info.latitude, info.longitude),
+      position: new window.kakao.maps.LatLng(info.centerLatitude, info.centerLongitude),
       image: defaultReportMarkerImage,
     });
 

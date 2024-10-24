@@ -12,7 +12,7 @@ import { useDialogContext } from "@/lib";
 import React, { useEffect, useState } from "react";
 import { Button, LoadingSpinner } from "../atom";
 import { ReportHistory } from "@/api";
-import { useReportHistoryApi } from "@/api/reportApi";
+import { useReportHistoryApi } from "@/api";
 import dayjs from "dayjs";
 
 interface ReportHistoryDialogProps {
