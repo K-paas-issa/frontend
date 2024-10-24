@@ -14,6 +14,7 @@ export interface ReportHistory {
   isCheckedStatus: boolean | null;
   reportedLatitude: number;
   reportedLongitude: number;
+  reportedTime: string;
   centerLatitude: number;
   centerLongitude: number;
   streetAddress: string;
@@ -35,17 +36,6 @@ export interface ReportHistoryRequest {
   code: string[];
 }
 
-export interface ReportHistoryResponse {
-  id: number;
-  serialCode: string;
-  isCheckedStatus: boolean;
-  reportedLatitude: number;
-  reportedLongitude: number;
-  centerLatitude: number;
-  centerLongitude: number;
-  streetAddress: string;
-}
-
 export function useReportApi() {
   return useMutation({
     mutationFn: ({ image }: ReportRequest) => {
@@ -58,21 +48,10 @@ export function useReportApi() {
   });
 }
 
-// export function useReportHistoryApi(codes: string[]) {
-//   return useQuery({
-//     queryKey: ["getReportHistoryList"],
-//     queryFn: () =>
-//       httpClient<ReportHistoryResponse[]>({
-//         method: "GET",
-//         url: `/balloons/report/status?codes=${codes}`,
-//       }),
-//   });
-// }
-
 export function useReportHistoryApi() {
   return useMutation({
     mutationFn: (codes: string[]) => {
-      return httpClient<ReportHistoryResponse[]>({
+      return httpClient<ReportHistory[]>({
         method: "GET",
         url: `/balloons/report/status?codes=${codes}`,
       });

@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import { Button, LoadingSpinner } from "../atom";
 import { ReportHistory } from "@/api";
 import { useReportHistoryApi } from "@/api/reportApi";
+import dayjs from "dayjs";
 
 interface ReportHistoryDialogProps {
   id: string;
@@ -53,14 +54,14 @@ const ReportHistoryDialog = React.memo(({ id }: ReportHistoryDialogProps) => {
     <Dialog open={isDialogOpen(id)} onOpenChange={() => dialogClose(id)}>
       <DialogContent>
         <DialogHeader className="mb-[0px]">
-          <DialogTitle>나의 신고 현황</DialogTitle>
+          <DialogTitle>나의 신고 내역</DialogTitle>
         </DialogHeader>
         {reportHistoryLoading && <LoadingSpinner />}
         {reportHistory && reportHistory.length > 0 ? (
           reportHistory.map((history, index) => (
             <>
               <div key={history.id} className="text-gray_05 body2">
-                <div>신고 날짜: 2024.09.01</div>
+                <div>신고 날짜: {dayjs(history.reportedTime).format("YYYY.MM.DD HH:mm")}</div>
                 <div>신고 위치: {history.streetAddress || "-"}</div>
                 <div>
                   처리 상태:{" "}
