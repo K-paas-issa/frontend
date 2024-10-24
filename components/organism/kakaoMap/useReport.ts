@@ -1,11 +1,16 @@
-import { ReportInfo } from "@/api";
+import { ReportInfo, useReportApi } from "@/api";
+import { ReportRequest } from "@/api/reportApi";
 import { useDialogContext } from "@/lib";
 import { useEffect, useState } from "react";
 
-const useReport = () => {
+const useReport = (currentLocation: { latitude: number; longitude: number } | null) => {
   const { dialogOpen, dialogClose } = useDialogContext();
   const [selectedImage, setSelectedImage] = useState<string | ArrayBuffer | null>(null);
   const [allReport, setAllReport] = useState<ReportInfo[]>([]);
+
+  const [requestData, setRequestData] = useState<ReportRequest>();
+
+  const { mutate: report, data: reportData, error: reportError } = useReportApi();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -22,12 +27,25 @@ const useReport = () => {
       setSelectedImage(reader.result);
     };
 
-    if (e.target.files) {
+    if (e.target.files && currentLocation) {
       const formData = new FormData();
       formData.append("image", e.target.files[0]);
-      // uploadProductImage({
-      //   file: formData,
-      // });
+
+      const requestObject = {
+        longitude: currentLocation.longitude,
+        latitude: currentLocation.latitude,
+      };
+
+      const json = JSON.stringify(requestObject);
+      const blob = new Blob([json], { type: "application/json" });
+
+      formData.append("request", blob);
+
+      setRequestData({
+        image: formData,
+        request: requestObject,
+      });
+
       e.target.value = "";
     }
 
@@ -39,12 +57,28 @@ const useReport = () => {
   };
 
   const handleReport = () => {
-    dialogClose(`report`);
-
-    setTimeout(() => {
-      dialogOpen(`reportSuccess`);
-    }, 100);
+    if (requestData) report(requestData);
   };
+
+  useEffect(() => {
+    if (reportData) {
+      dialogClose(`report`);
+
+      setTimeout(() => {
+        dialogOpen(`reportSuccess`);
+      }, 100);
+    }
+  }, [reportData]);
+
+  useEffect(() => {
+    if (reportError) {
+      dialogClose(`report`);
+
+      setTimeout(() => {
+        dialogOpen(`reportFailed`);
+      }, 100);
+    }
+  }, [reportError]);
 
   useEffect(() => {
     setAllReport([

@@ -11,7 +11,7 @@ interface ImageUploadBoxProps {
 export const ImageUploadBox = ({ selectedImage, onImageUpload, onImageRemove }: ImageUploadBoxProps) => {
   return (
     <div>
-      <Input type="file" id="file" onChange={onImageUpload} className="hidden" />
+      <Input type="file" id="file" accept=".jpg, .jpeg, .png" onChange={onImageUpload} className="hidden" />
       {selectedImage ? (
         <div className="relative group">
           <Image

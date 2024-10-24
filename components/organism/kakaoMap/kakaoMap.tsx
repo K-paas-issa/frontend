@@ -41,7 +41,7 @@ export function KakaoMap() {
     map,
     allBalloon
   );
-  const { allReport, selectedImage, handleImageUpload, handleImageRemove, handleReport } = useReport();
+  const { allReport, selectedImage, handleImageUpload, handleImageRemove, handleReport } = useReport(currentLocation);
 
   useEffect(() => {
     const initializeMap = async () => {
@@ -161,10 +161,22 @@ export function KakaoMap() {
           message={
             <div className="body2 space-y-[2px]">
               <div>신고가 정상 접수되었습니다.</div>
-              <div className="text-green pt-[12px]">
-                <div>신고일자: 2024.01.01</div>
-                <div>신고위치: 서울특별시 동작구 등용로</div>
-              </div>
+            </div>
+          }
+          options={
+            <Button variant="sky" className="w-full">
+              확인
+            </Button>
+          }
+        />
+      )}
+      {isDialogOpen("reportFailed") && (
+        <SimpleAlarmDialog
+          id="reportFailed"
+          title="알림"
+          message={
+            <div className="body2 space-y-[2px]">
+              <div>신고가 정상적으로 요청되지 않았습니다.</div>
             </div>
           }
           options={
