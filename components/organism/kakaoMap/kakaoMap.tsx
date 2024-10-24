@@ -91,7 +91,7 @@ export function KakaoMap() {
 
   // 신고 수 마커 생성
   useEffect(() => {
-    if (map && allReport.length >= 0) {
+    if (map && allReport.length > 0) {
       const reports = allReport;
       if (reports) {
         if (reports.length === 1) {
@@ -107,7 +107,7 @@ export function KakaoMap() {
 
   // 폴리곤 그리고 내 위치 마커 생성
   useEffect(() => {
-    if (map && currentLocation && balloonList && eachAreasRisk.size >= 0) {
+    if (map && currentLocation && balloonList && eachAreasRisk.size > 0) {
       setCurrentLocationMarkerOnMap(currentLocation.latitude, currentLocation.longitude);
       settingJsonFileByZoomLevelAndCreateEachPolygons();
       window.kakao.maps.event.addListener(map, "zoom_changed", settingJsonFileByZoomLevelAndCreateEachPolygons);
