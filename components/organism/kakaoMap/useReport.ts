@@ -1,5 +1,5 @@
 import { ReportInfo, useReportApi } from "@/api";
-import { ReportRequest } from "@/api/reportApi";
+import { ReportHistory, ReportRequest, useReportHistoryApi } from "@/api/reportApi";
 import { useDialogContext } from "@/lib";
 import { useEffect, useState } from "react";
 
@@ -7,7 +7,6 @@ const useReport = (currentLocation: { latitude: number; longitude: number } | nu
   const { dialogOpen, dialogClose } = useDialogContext();
   const [selectedImage, setSelectedImage] = useState<string | ArrayBuffer | null>(null);
   const [allReport, setAllReport] = useState<ReportInfo[]>([]);
-
   const [requestData, setRequestData] = useState<ReportRequest>();
 
   const { mutate: report, data: reportData, error: reportError } = useReportApi();
@@ -62,6 +61,11 @@ const useReport = (currentLocation: { latitude: number; longitude: number } | nu
 
   useEffect(() => {
     if (reportData) {
+      const storedReports = localStorage.getItem("report");
+      let reportArray = storedReports ? JSON.parse(storedReports) : [];
+      reportArray.push(reportData.code);
+      localStorage.setItem("report", JSON.stringify(reportArray));
+
       dialogClose(`report`);
 
       setTimeout(() => {
