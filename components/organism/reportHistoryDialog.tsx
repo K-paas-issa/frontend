@@ -59,8 +59,8 @@ const ReportHistoryDialog = React.memo(({ id }: ReportHistoryDialogProps) => {
         {reportHistoryLoading && <LoadingSpinner />}
         {reportHistory && reportHistory.length > 0 ? (
           reportHistory.map((history, index) => (
-            <>
-              <div key={history.id} className="text-gray_05 body2">
+            <div key={history.id}>
+              <div className="text-gray_05 body2">
                 <div>신고 날짜: {dayjs(history.reportedTime).format("YYYY.MM.DD HH:mm")}</div>
                 <div>신고 위치: {history.streetAddress || "-"}</div>
                 <div>
@@ -80,7 +80,7 @@ const ReportHistoryDialog = React.memo(({ id }: ReportHistoryDialogProps) => {
                 {history.isCheckedStatus == false && <div>실패 사유: 이미지 검증에 실패했습니다.</div>}
               </div>
               {index !== reportHistory.length - 1 && <div className="h-[1px] w-full bg-gray_02 my-[10px]" />}
-            </>
+            </div>
           ))
         ) : reportHistoryError ? (
           <div className="text-center mb-[24px] text-gray_05 body2">신고 내역을 가져오지 못했습니다.</div>

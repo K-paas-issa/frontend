@@ -113,7 +113,7 @@ export function KakaoMap() {
   }, [map, currentLocation]);
 
   useEffect(() => {
-    if (map && balloonList && eachAreasRisk.size > 0) {
+    if (map && balloonList && eachAreasRisk.size >= 0) {
       settingJsonFileByZoomLevelAndCreateEachPolygons();
       window.kakao.maps.event.addListener(map, "zoom_changed", settingJsonFileByZoomLevelAndCreateEachPolygons);
     }
