@@ -29,7 +29,7 @@ const ReportDialog = React.memo(({ id, onReport, selectedImage, onImageUpload, o
         </DialogHeader>
         <DialogFooter>
           <div className="w-full flex flex-col gap-[8px]">
-            <Button variant="sky" className="w-full" onClick={onReport}>
+            <Button variant="sky" className="w-full" onClick={onReport} disabled={!selectedImage}>
               접수하기
             </Button>
             <Button variant="text" className="w-full" onClick={() => dialogClose(id)}>
