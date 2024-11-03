@@ -1,4 +1,3 @@
-export { Tooltip } from "./tooltip";
 export {
   Dialog,
   DialogPortal,

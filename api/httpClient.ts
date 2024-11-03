@@ -1,4 +1,3 @@
-import { createApiErrorMessage } from "./httpError";
 import axios, { AxiosResponse } from "axios";
 
 const developmentApiUrl = process.env["NEXT_PUBLIC_SERVER_IP_DEVELOPMENT"];
@@ -14,8 +13,7 @@ async function httpClient<T>(...args: Parameters<typeof client.request>) {
     return response.data;
   } catch (e) {
     if (axios.isAxiosError(e) && e.response) {
-      const errorMessage = e.response.data.message ? e.response.data.message : createApiErrorMessage(e.response.status);
-      throw new Error(errorMessage);
+      throw new Error(e.response.data.message);
     } else {
       throw new Error("알 수 없는 오류가 발생했어요");
     }

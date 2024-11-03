@@ -1,7 +1,7 @@
 import React from "react";
 import { BalloonInfo } from "@/api";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Report } from "../atom";
+import { ArrowRight } from "../atom";
 
 export const DetailPopup = ({ info, onClick }: { info: BalloonInfo | null; onClick: () => void }) => {
   return (

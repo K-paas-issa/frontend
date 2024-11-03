@@ -1,6 +1,6 @@
 import { BalloonInfo, ReportInfo, useBalloonApi } from "@/api";
 import { useDialogContext } from "@/lib";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const useKakaomap = () => {
   const [map, setMap] = useState<any>(null);

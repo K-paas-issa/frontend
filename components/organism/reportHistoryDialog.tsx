@@ -1,13 +1,5 @@
 "use client";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  ImageUploadBox,
-} from "@/components/molecule";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/molecule";
 import { useDialogContext } from "@/lib";
 import React, { useEffect, useState } from "react";
 import { Button, LoadingSpinner } from "../atom";

@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import React from "react";
 
-export const Comment = ({ id, content, createdAt }: { id: number; content: string; createdAt: string }) => {
+export const Comment = ({ content, createdAt }: { id: number; content: string; createdAt: string }) => {
   return (
     <div className="flex justify-between items-center border_gray_02 border-b py-[16px]">
       <div>
